@@ -1,0 +1,103 @@
+{% extends "layout.html" %}
+
+{% block title %}Fahamu - Mental Health Chatbot{% endblock %}
+
+{% block content %}
+<div class="hero">
+    <div class="hero-content">
+        <h1 class="hero-title">Your Mental Wellness Companion</h1>
+        <p class="hero-subtitle">Fahamu helps manage anxiety through supportive conversations, using both text and voice interaction to provide therapy-based support whenever you need it.</p>
+        <div class="hero-buttons">
+            {% if current_user.is_authenticated %}
+                <a href="{{ url_for('chat') }}" class="btn btn-primary btn-lg">Start Chatting</a>
+                <a href="{{ url_for('profile') }}" class="btn btn-outline btn-lg">My Progress</a>
+            {% else %}
+                <a href="{{ url_for('chat') }}" class="btn btn-primary btn-lg">Try as Guest</a>
+                <a href="{{ url_for('register') }}" class="btn btn-outline btn-lg">Sign Up Free</a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<section class="section">
+    <div class="section-header">
+        <h2>How Fahamu Helps</h2>
+        <p>Our AI-powered mental health chatbot offers multiple ways to support your anxiety management</p>
+    </div>
+    <div class="features">
+        <div class="feature-card">
+            <div class="feature-icon">
+                <i class="fas fa-comments"></i>
+            </div>
+            <h3 class="feature-title">Text & Voice Conversations</h3>
+            <p class="feature-description">Choose whether to type or speak with Fahamu. Seamlessly switch between text and voice modes based on your comfort and situation.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">
+                <i class="fas fa-brain"></i>
+            </div>
+            <h3 class="feature-title">Specialized Anxiety Support</h3>
+            <p class="feature-description">Fahamu is specifically designed to help with anxiety disorders, offering evidence-based coping strategies and therapeutic conversations.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">
+                <i class="fas fa-chart-line"></i>
+            </div>
+            <h3 class="feature-title">Progress Tracking</h3>
+            <p class="feature-description">Set recovery checkpoints and track your progress over time. Celebrate achievements and stay motivated on your wellness journey.</p>
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="section-header">
+        <h2>Features You'll Love</h2>
+    </div>
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h4><i class="fas fa-microphone-alt"></i> Voice Customization</h4>
+                    <p>Choose between male and female voices, and adjust pitch and speed to create a voice that feels comfortable and supportive to you.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h4><i class="fas fa-award"></i> Recovery Checkpoints</h4>
+                    <p>Set personalized goals and track your progress with our checkpoint system. Celebrating small wins is important for your mental health journey.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h4><i class="fas fa-user-shield"></i> Private & Secure</h4>
+                    <p>Your conversations and data are kept private. Create an account to save your chat history and personalized settings.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h4><i class="fas fa-book-medical"></i> Evidence-Based Approach</h4>
+                    <p>Fahamu's responses are grounded in therapeutic techniques like cognitive behavioral therapy, mindfulness, and anxiety management strategies.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="cta-section">
+    <h2 class="cta-title">Ready to Take the First Step?</h2>
+    <p class="cta-text">Starting your mental wellness journey can be as simple as having a conversation. Fahamu is here to listen and support you, anytime you need it.</p>
+    {% if current_user.is_authenticated %}
+        <a href="{{ url_for('chat') }}" class="btn btn-primary btn-lg">Chat Now</a>
+    {% else %}
+        <a href="{{ url_for('register') }}" class="btn btn-primary btn-lg">Sign Up Free</a>
+        <a href="{{ url_for('chat') }}" class="btn btn-outline btn-lg">Try as Guest</a>
+    {% endif %}
+</div>
+
+{% endblock %}

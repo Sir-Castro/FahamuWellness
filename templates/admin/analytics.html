@@ -1,0 +1,201 @@
+{% extends "layout.html" %}
+
+{% block title %}Analytics - Fahamu Admin{% endblock %}
+
+{% block additional_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="admin-container">
+    <div class="admin-sidebar">
+        <div class="admin-logo">
+            <i class="fas fa-brain fa-fw me-2"></i> Fahamu Admin
+        </div>
+        <ul class="admin-nav">
+            <li class="admin-nav-item">
+                <a href="{{ url_for('admin_dashboard') }}" class="admin-nav-link">
+                    <i class="fas fa-tachometer-alt admin-nav-icon"></i>
+                    <span class="admin-nav-text">Dashboard</span>
+                </a>
+            </li>
+            <li class="admin-nav-item">
+                <a href="{{ url_for('admin_users') }}" class="admin-nav-link">
+                    <i class="fas fa-users admin-nav-icon"></i>
+                    <span class="admin-nav-text">Users</span>
+                </a>
+            </li>
+            <li class="admin-nav-item">
+                <a href="{{ url_for('admin_analytics') }}" class="admin-nav-link active">
+                    <i class="fas fa-chart-bar admin-nav-icon"></i>
+                    <span class="admin-nav-text">Analytics</span>
+                </a>
+            </li>
+            <li class="admin-nav-item">
+                <a href="{{ url_for('chat') }}" class="admin-nav-link">
+                    <i class="fas fa-comments admin-nav-icon"></i>
+                    <span class="admin-nav-text">Chat Interface</span>
+                </a>
+            </li>
+            <li class="admin-nav-item">
+                <a href="{{ url_for('home') }}" class="admin-nav-link">
+                    <i class="fas fa-home admin-nav-icon"></i>
+                    <span class="admin-nav-text">Main Site</span>
+                </a>
+            </li>
+            <li class="admin-nav-item">
+                <a href="{{ url_for('logout') }}" class="admin-nav-link">
+                    <i class="fas fa-sign-out-alt admin-nav-icon"></i>
+                    <span class="admin-nav-text">Logout</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+    
+    <div class="admin-content">
+        <div class="admin-header">
+            <h1 class="admin-title">Analytics</h1>
+            <div class="admin-header-actions">
+                <select class="admin-form-control" id="timeRangeSelector">
+                    <option value="7">Last 7 days</option>
+                    <option value="30">Last 30 days</option>
+                    <option value="90">Last 3 months</option>
+                    <option value="365">Last year</option>
+                    <option value="all" selected>All time</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="charts-row mb-4">
+            <div class="chart-container">
+                <h3>User Growth</h3>
+                <canvas id="userGrowthChart"></canvas>
+            </div>
+            <div class="chart-container">
+                <h3>Anxiety Levels Distribution</h3>
+                <canvas id="anxietyLevelsChart"></canvas>
+            </div>
+        </div>
+        
+        <div class="charts-row mb-4">
+            <div class="chart-container">
+                <h3>Chat Activity</h3>
+                <canvas id="chatActivityChart"></canvas>
+            </div>
+            <div class="chart-container">
+                <h3>User Progress</h3>
+                <canvas id="userProgressChart"></canvas>
+            </div>
+        </div>
+        
+        <div class="admin-card">
+            <div class="admin-card-header">
+                <h3 class="admin-card-title">Key Metrics</h3>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="table-responsive">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Metric</th>
+                                    <th>Value</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Average Chats per User</td>
+                                    <td id="avgChatsPerUser">Calculating...</td>
+                                </tr>
+                                <tr>
+                                    <td>Average Messages per Chat</td>
+                                    <td id="avgMessagesPerChat">Calculating...</td>
+                                </tr>
+                                <tr>
+                                    <td>Average Anxiety Score (Initial)</td>
+                                    <td id="avgInitialAnxietyScore">Calculating...</td>
+                                </tr>
+                                <tr>
+                                    <td>Average Anxiety Score (Current)</td>
+                                    <td id="avgCurrentAnxietyScore">Calculating...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="table-responsive">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Statistic</th>
+                                    <th>Value</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>User Retention Rate</td>
+                                    <td id="userRetentionRate">Calculating...</td>
+                                </tr>
+                                <tr>
+                                    <td>Guest to Registered Conversion</td>
+                                    <td id="guestConversionRate">Calculating...</td>
+                                </tr>
+                                <tr>
+                                    <td>Average Checkpoints per User</td>
+                                    <td id="avgCheckpointsPerUser">Calculating...</td>
+                                </tr>
+                                <tr>
+                                    <td>Average Progress Percentage</td>
+                                    <td id="avgProgressPercentage">Calculating...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="admin-card mt-4">
+            <div class="admin-card-header">
+                <h3 class="admin-card-title">Top Anxiety Triggers</h3>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <canvas id="anxietyTriggersChart" height="300"></canvas>
+                </div>
+                <div class="col-md-6">
+                    <div class="table-responsive">
+                        <table class="admin-table" id="anxietyTriggersTable">
+                            <thead>
+                                <tr>
+                                    <th>Trigger</th>
+                                    <th>Occurrence</th>
+                                    <th>Percentage</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- This will be populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Hidden data elements -->
+<div id="analyticsData" 
+     data-severity-labels='{{ severity_labels }}'
+     data-severity-data='{{ severity_data }}'
+     data-months='{{ months }}'
+     data-user-counts='{{ user_counts }}'>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{{ url_for('static', filename='js/charts.js') }}"></script>
+<script src="{{ url_for('static', filename='js/admin.js') }}"></script>
+{% endblock %}

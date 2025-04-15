@@ -1,0 +1,231 @@
+{% extends "layout.html" %}
+
+{% block title %}Admin Dashboard - Fahamu{% endblock %}
+
+{% block additional_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="admin-container">
+    <div class="admin-sidebar">
+        <div class="admin-logo">
+            <i class="fas fa-brain fa-fw me-2"></i> Fahamu Admin
+        </div>
+        <ul class="admin-nav">
+            <li class="admin-nav-item">
+                <a href="{{ url_for('admin_dashboard') }}" class="admin-nav-link active">
+                    <i class="fas fa-tachometer-alt admin-nav-icon"></i>
+                    <span class="admin-nav-text">Dashboard</span>
+                </a>
+            </li>
+            <li class="admin-nav-item">
+                <a href="{{ url_for('admin_users') }}" class="admin-nav-link">
+                    <i class="fas fa-users admin-nav-icon"></i>
+                    <span class="admin-nav-text">Users</span>
+                </a>
+            </li>
+            <li class="admin-nav-item">
+                <a href="{{ url_for('admin_analytics') }}" class="admin-nav-link">
+                    <i class="fas fa-chart-bar admin-nav-icon"></i>
+                    <span class="admin-nav-text">Analytics</span>
+                </a>
+            </li>
+            <li class="admin-nav-item">
+                <a href="{{ url_for('chat') }}" class="admin-nav-link">
+                    <i class="fas fa-comments admin-nav-icon"></i>
+                    <span class="admin-nav-text">Chat Interface</span>
+                </a>
+            </li>
+            <li class="admin-nav-item">
+                <a href="{{ url_for('home') }}" class="admin-nav-link">
+                    <i class="fas fa-home admin-nav-icon"></i>
+                    <span class="admin-nav-text">Main Site</span>
+                </a>
+            </li>
+            <li class="admin-nav-item">
+                <a href="{{ url_for('logout') }}" class="admin-nav-link">
+                    <i class="fas fa-sign-out-alt admin-nav-icon"></i>
+                    <span class="admin-nav-text">Logout</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+    
+    <div class="admin-content">
+        <div class="admin-header">
+            <h1 class="admin-title">Dashboard</h1>
+            <div class="admin-header-actions">
+                <button class="admin-btn admin-btn-primary" id="showNotificationPanel">
+                    <i class="fas fa-bell fa-fw"></i> Send Notification
+                </button>
+            </div>
+        </div>
+        
+        <div class="stat-cards">
+            <div class="stat-card primary">
+                <span class="stat-value">{{ user_count }}</span>
+                <span class="stat-label">Registered Users</span>
+                <div class="stat-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+            </div>
+            <div class="stat-card success">
+                <span class="stat-value">{{ chat_count }}</span>
+                <span class="stat-label">Total Chats</span>
+                <div class="stat-icon">
+                    <i class="fas fa-comments"></i>
+                </div>
+            </div>
+            <div class="stat-card warning">
+                <span class="stat-value">{{ message_count }}</span>
+                <span class="stat-label">Messages Exchanged</span>
+                <div class="stat-icon">
+                    <i class="fas fa-comment-dots"></i>
+                </div>
+            </div>
+            <div class="stat-card danger">
+                <span class="stat-value">{{ guest_chat_count }}</span>
+                <span class="stat-label">Guest Sessions</span>
+                <div class="stat-icon">
+                    <i class="fas fa-user-secret"></i>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <div class="admin-card">
+                    <div class="admin-card-header">
+                        <h3 class="admin-card-title">Recent Users</h3>
+                        <a href="{{ url_for('admin_users') }}" class="admin-btn admin-btn-sm">View All</a>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>User</th>
+                                    <th>Joined</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for user in recent_users %}
+                                <tr>
+                                    <td>
+                                        <div class="user-details">
+                                            <div class="user-avatar">
+                                                {{ user.username[0]|upper }}
+                                            </div>
+                                            <div class="user-info">
+                                                <p class="user-name">{{ user.username }}</p>
+                                                <p class="user-email">{{ user.email }}</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>{{ user.date_joined.strftime('%b %d, %Y') }}</td>
+                                    <td>
+                                        <button class="admin-btn admin-btn-sm admin-btn-primary send-notification-btn" 
+                                                data-user-id="{{ user.id }}" 
+                                                data-username="{{ user.username }}">
+                                            <i class="fas fa-envelope fa-fw"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="admin-card">
+                    <div class="admin-card-header">
+                        <h3 class="admin-card-title">Recent Chats</h3>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>User</th>
+                                    <th>Time</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for chat, username in recent_chats %}
+                                <tr>
+                                    <td>
+                                        {% if username %}
+                                            {{ username }}
+                                        {% else %}
+                                            <span class="badge badge-info">Guest</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ chat.timestamp.strftime('%b %d, %H:%M') }}</td>
+                                    <td>
+                                        {% if chat.messages|length > 0 %}
+                                            <span class="badge badge-success">Active</span>
+                                        {% else %}
+                                            <span class="badge badge-warning">New</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="admin-card mt-4">
+            <div class="admin-card-header">
+                <h3 class="admin-card-title">Anxiety Level Overview</h3>
+                <a href="{{ url_for('admin_analytics') }}" class="admin-btn admin-btn-sm">Detailed Analytics</a>
+            </div>
+            <div class="chart-container">
+                <canvas id="anxietyLevelChart"></canvas>
+            </div>
+        </div>
+    </div>
+    
+    <div class="notification-panel" id="notificationPanel">
+        <div class="notification-header">
+            <h3 class="notification-title">Send Notification</h3>
+            <button class="notification-close" id="closeNotificationPanel">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <div class="notification-form">
+            <form id="sendNotificationForm">
+                <div class="admin-form-group">
+                    <label for="recipient" class="admin-form-label">Recipient</label>
+                    <input type="text" id="recipient" class="admin-form-control" readonly>
+                    <input type="hidden" id="recipientId">
+                </div>
+                
+                <div class="admin-form-group">
+                    <label for="subject" class="admin-form-label">Subject</label>
+                    <input type="text" id="subject" class="admin-form-control" required>
+                </div>
+                
+                <div class="admin-form-group">
+                    <label for="message" class="admin-form-label">Message</label>
+                    <textarea id="message" class="admin-form-control" rows="5" required></textarea>
+                </div>
+                
+                <button type="submit" class="admin-btn admin-btn-primary">Send Notification</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{{ url_for('static', filename='js/admin.js') }}"></script>
+<script src="{{ url_for('static', filename='js/charts.js') }}"></script>
+{% endblock %}

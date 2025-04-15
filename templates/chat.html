@@ -1,0 +1,202 @@
+{% extends "layout.html" %}
+
+{% block title %}Chat with Fahamu{% endblock %}
+
+{% block additional_css %}
+<style>
+    .suggested-prompts {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 15px;
+    }
+    
+    .suggested-prompt {
+        background-color: var(--primary-light);
+        border: 1px solid var(--primary-color);
+        color: var(--primary-dark);
+        border-radius: var(--radius-full);
+        padding: 6px 12px;
+        font-size: var(--text-sm);
+        cursor: pointer;
+        transition: all var(--transition-fast) ease;
+    }
+    
+    .suggested-prompt:hover {
+        background-color: var(--primary-color);
+        color: white;
+    }
+    
+    .speak-indicator {
+        display: none;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+        margin-left: 10px;
+        color: var(--primary-color);
+    }
+    
+    .speak-indicator.active {
+        display: flex;
+    }
+    
+    .speak-wave {
+        width: 3px;
+        height: 15px;
+        background-color: var(--primary-color);
+        animation: speak-wave 1s infinite ease-in-out;
+    }
+    
+    .speak-wave:nth-child(2) { animation-delay: 0.2s; }
+    .speak-wave:nth-child(3) { animation-delay: 0.4s; }
+    .speak-wave:nth-child(4) { animation-delay: 0.6s; }
+    
+    @keyframes speak-wave {
+        0%, 100% { transform: scaleY(0.5); }
+        50% { transform: scaleY(1); }
+    }
+    
+    .message-status {
+        font-size: var(--text-sm);
+        color: var(--neutral-600);
+        margin-left: 10px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8">
+        <div class="chat-container">
+            <div class="chat-header">
+                <h3 class="chat-title">
+                    {% if current_user.is_authenticated %}
+                        Chat with Fahamu
+                    {% else %}
+                        Guest Chat Session
+                    {% endif %}
+                </h3>
+                <div class="chat-controls">
+                    <div class="speak-indicator">
+                        <div class="speak-wave"></div>
+                        <div class="speak-wave"></div>
+                        <div class="speak-wave"></div>
+                        <div class="speak-wave"></div>
+                    </div>
+                    <span class="message-status"></span>
+                </div>
+            </div>
+            
+            <div class="chat-body">
+                <!-- Hidden intro message that will be added to chat -->
+                <div id="intro-message" style="display: none;">
+                    {% if current_user.is_authenticated %}
+                        Hello {{ current_user.username }}! I'm Fahamu, your mental wellness companion. How are you feeling today?
+                    {% else %}
+                        Hello! I'm Fahamu, your mental wellness companion. I specialize in anxiety therapy. How are you feeling today? (Note: To save your conversations and access all features, consider creating an account).
+                    {% endif %}
+                </div>
+                <!-- Chat messages will be added here dynamically -->
+            </div>
+            
+            <div class="chat-footer">
+                <div class="suggested-prompts">
+                    <!-- Suggested prompts will be added here dynamically -->
+                </div>
+                
+                <form class="chat-form">
+                    <div class="chat-input-container">
+                        <button type="button" class="chat-voice-toggle" title="Toggle voice input">
+                            <i class="fas fa-microphone"></i>
+                        </button>
+                        <input type="text" class="chat-input" placeholder="Type your message here...">
+                        <button type="submit" class="chat-submit" title="Send message">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-4">
+        <div class="card mb-4">
+            <div class="card-body">
+                <h4>Voice Settings</h4>
+                
+                <input type="hidden" id="voice-preference" value="{{ voice_preference }}">
+                
+                <div class="voice-option">
+                    <label for="voice-gender">Voice Type</label>
+                    <select id="voice-gender" class="form-control">
+                        <option value="female" {% if voice_preference == 'female' %}selected{% endif %}>Female</option>
+                        <option value="male" {% if voice_preference == 'male' %}selected{% endif %}>Male</option>
+                    </select>
+                </div>
+                
+                <div class="voice-option">
+                    <label for="voice-pitch">Voice Pitch: <span id="voice-pitch-value">{{ voice_pitch }}</span></label>
+                    <input type="range" id="voice-pitch" class="form-range" min="0.5" max="2" step="0.1" value="{{ voice_pitch }}">
+                    <div class="range-labels">
+                        <span>Lower</span>
+                        <span>Default</span>
+                        <span>Higher</span>
+                    </div>
+                </div>
+                
+                <div class="voice-option">
+                    <label for="voice-speed">Voice Speed: <span id="voice-speed-value">{{ voice_speed }}</span></label>
+                    <input type="range" id="voice-speed" class="form-range" min="0.5" max="2" step="0.1" value="{{ voice_speed }}">
+                    <div class="range-labels">
+                        <span>Slower</span>
+                        <span>Default</span>
+                        <span>Faster</span>
+                    </div>
+                </div>
+                
+                <div class="form-check mt-3">
+                    <input class="form-check-input" type="checkbox" id="auto-speak" checked>
+                    <label class="form-check-label" for="auto-speak">
+                        Automatically speak responses
+                    </label>
+                </div>
+                
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="auto-submit" checked>
+                    <label class="form-check-label" for="auto-submit">
+                        Auto-submit after voice input
+                    </label>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-body">
+                <h4>Tips for Conversation</h4>
+                <ul>
+                    <li>Be specific about how you're feeling</li>
+                    <li>Try voice mode for a more natural experience</li>
+                    <li>Ask for breathing exercises when feeling anxious</li>
+                    <li>Request specific coping strategies for your situation</li>
+                    <li>Use the suggested prompts if you're not sure what to say</li>
+                </ul>
+                
+                {% if not current_user.is_authenticated %}
+                <div class="alert alert-info mt-3">
+                    <i class="fas fa-info-circle"></i> Create an account to save your conversations and track your progress.
+                    <div class="mt-2">
+                        <a href="{{ url_for('register') }}" class="btn btn-sm btn-primary">Sign Up</a>
+                        <a href="{{ url_for('login') }}" class="btn btn-sm btn-outline">Login</a>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/voice.js') }}"></script>
+<script src="{{ url_for('static', filename='js/chat.js') }}"></script>
+{% endblock %}

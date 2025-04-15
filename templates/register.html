@@ -1,0 +1,103 @@
+{% extends "layout.html" %}
+
+{% block title %}Register - Fahamu{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-6 offset-md-3">
+        <div class="card mt-5">
+            <div class="card-body">
+                <h2 class="text-center mb-4">Create an Account</h2>
+                <p class="text-center mb-4">Join Fahamu to access personalized anxiety therapy and track your progress</p>
+                
+                <form method="POST" action="{{ url_for('register') }}">
+                    {{ form.hidden_tag() }}
+                    
+                    <div class="form-group mb-3">
+                        {{ form.username.label(class="form-label") }}
+                        {% if form.username.errors %}
+                            {{ form.username(class="form-control is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.username.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.username(class="form-control", placeholder="Choose a username") }}
+                        {% endif %}
+                    </div>
+                    
+                    <div class="form-group mb-3">
+                        {{ form.email.label(class="form-label") }}
+                        {% if form.email.errors %}
+                            {{ form.email(class="form-control is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.email.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.email(class="form-control", placeholder="Your email address") }}
+                        {% endif %}
+                    </div>
+                    
+                    <div class="form-group mb-3">
+                        {{ form.password.label(class="form-label") }}
+                        {% if form.password.errors %}
+                            {{ form.password(class="form-control is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.password.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.password(class="form-control", placeholder="Create a secure password") }}
+                        {% endif %}
+                    </div>
+                    
+                    <div class="form-group mb-4">
+                        {{ form.confirm_password.label(class="form-label") }}
+                        {% if form.confirm_password.errors %}
+                            {{ form.confirm_password(class="form-control is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.confirm_password.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.confirm_password(class="form-control", placeholder="Confirm your password") }}
+                        {% endif %}
+                    </div>
+                    
+                    <div class="d-grid">
+                        {{ form.submit(class="btn btn-primary btn-block") }}
+                    </div>
+                </form>
+                
+                <div class="text-center mt-3">
+                    <small class="text-muted">
+                        Already have an account? <a href="{{ url_for('login') }}">Log In</a>
+                    </small>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card mt-4">
+            <div class="card-body">
+                <h4>Why Create an Account?</h4>
+                <ul>
+                    <li>Save your conversation history</li>
+                    <li>Customize voice preferences</li>
+                    <li>Track your mental wellness progress</li>
+                    <li>Set and achieve personal checkpoints</li>
+                    <li>Receive progress notifications</li>
+                </ul>
+                
+                <div class="text-center mt-3">
+                    <a href="{{ url_for('chat') }}" class="btn btn-outline">Continue as Guest</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

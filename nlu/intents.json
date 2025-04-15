@@ -1,0 +1,178 @@
+{
+  "intents": [
+    {
+      "tag": "greeting",
+      "patterns": [
+        "Hi",
+        "Hello",
+        "Hey",
+        "How are you",
+        "What's up",
+        "Good morning",
+        "Good afternoon",
+        "Good evening"
+      ],
+      "responses": [
+        "Hello! I'm Fahamu, your anxiety therapy assistant. How are you feeling today?",
+        "Hi there! I'm Fahamu, here to help with anxiety management. How are you doing?",
+        "Hello! I'm Fahamu, your mental wellness companion. How can I support you today?"
+      ]
+    },
+    {
+      "tag": "goodbye",
+      "patterns": [
+        "Bye",
+        "Goodbye",
+        "See you later",
+        "I'm leaving",
+        "Talk to you later",
+        "I have to go"
+      ],
+      "responses": [
+        "Goodbye! Remember to practice your breathing exercises.",
+        "Take care! Remember, I'm here whenever you need support.",
+        "Farewell for now. Remember that managing anxiety is a journey, not a destination."
+      ]
+    },
+    {
+      "tag": "thanks",
+      "patterns": [
+        "Thank you",
+        "Thanks",
+        "I appreciate it",
+        "That's helpful",
+        "Thanks for your help"
+      ],
+      "responses": [
+        "You're welcome! I'm glad I could help.",
+        "It's my pleasure to support you on your mental wellness journey.",
+        "You're welcome! Remember, seeking help is a sign of strength."
+      ]
+    },
+    {
+      "tag": "anxiety_symptoms",
+      "patterns": [
+        "I feel anxious",
+        "My heart is racing",
+        "I can't sleep because of worry",
+        "I feel nervous all the time",
+        "I'm always worried",
+        "I'm having panic attacks",
+        "I can't stop worrying",
+        "I feel on edge"
+      ],
+      "responses": [
+        "I understand that anxiety can be overwhelming. Let's try a deep breathing exercise together: breathe in for 4 counts, hold for 2, and exhale for 6 counts.",
+        "Anxiety symptoms can be challenging. Have you tried the 5-4-3-2-1 grounding technique? Notice 5 things you can see, 4 things you can touch, 3 things you can hear, 2 things you can smell, and 1 thing you can taste.",
+        "I hear that you're experiencing anxiety symptoms. Remember that your thoughts are not facts, and this feeling will pass. Would you like to try a quick mindfulness exercise?"
+      ]
+    },
+    {
+      "tag": "relaxation",
+      "patterns": [
+        "How can I relax",
+        "I need to calm down",
+        "Tell me a relaxation technique",
+        "I need to destress",
+        "How to reduce anxiety quickly",
+        "Help me relax"
+      ],
+      "responses": [
+        "Try progressive muscle relaxation: tense each muscle group for 5-10 seconds, then release and notice the relaxation. Start with your feet and work up to your face.",
+        "A quick way to relax is the 4-7-8 breathing technique: Inhale for 4 seconds, hold for 7 seconds, and exhale for 8 seconds. Repeat this cycle 3-4 times.",
+        "Visualization can help: Close your eyes and imagine a peaceful place where you feel safe and relaxed. Engage all your senses in this imagery for 5-10 minutes."
+      ]
+    },
+    {
+      "tag": "coping_strategies",
+      "patterns": [
+        "How do I cope with anxiety",
+        "What are good coping mechanisms",
+        "I need strategies for anxiety",
+        "How to handle anxious thoughts",
+        "What helps with anxiety"
+      ],
+      "responses": [
+        "Regular exercise, even just a 10-minute walk, can significantly reduce anxiety. Physical activity releases endorphins that improve mood and reduce tension.",
+        "Mindfulness meditation can help you stay present and reduce anxious thoughts about the future. Start with just 5 minutes daily and gradually increase.",
+        "Cognitive restructuring is helpful: identify negative thought patterns and challenge them with evidence. Ask yourself, 'What's the evidence for and against this thought?'"
+      ]
+    },
+    {
+      "tag": "breathing_exercise",
+      "patterns": [
+        "Teach me breathing exercises",
+        "How to breathe for anxiety",
+        "Breathing techniques",
+        "Deep breathing help",
+        "Breath control for panic"
+      ],
+      "responses": [
+        "Let's try box breathing: inhale for 4 seconds, hold for 4 seconds, exhale for 4 seconds, hold for 4 seconds. Repeat this cycle 4 times.",
+        "Diaphragmatic breathing helps reduce anxiety. Place one hand on your chest and the other on your stomach. Breathe deeply so that your stomach pushes your hand out, not your chest.",
+        "Try alternate nostril breathing: Close your right nostril with your thumb, inhale through your left nostril, close your left nostril with your finger, release your thumb, exhale through your right nostril. Reverse and repeat."
+      ]
+    },
+    {
+      "tag": "mindfulness",
+      "patterns": [
+        "What is mindfulness",
+        "How to practice mindfulness",
+        "Mindfulness for anxiety",
+        "Tell me about being present",
+        "How can mindfulness help"
+      ],
+      "responses": [
+        "Mindfulness is the practice of paying attention to the present moment without judgment. Start by focusing on your breath for 5 minutes daily.",
+        "A simple mindfulness exercise is mindful eating: focus completely on the experience of eating, noticing flavors, textures, and sensations without distraction.",
+        "For anxiety, try the STOP technique: Stop, Take a breath, Observe your thoughts and feelings, and Proceed with awareness. This brings you back to the present moment."
+      ]
+    },
+    {
+      "tag": "sleep",
+      "patterns": [
+        "I can't sleep because of anxiety",
+        "How to sleep better with anxiety",
+        "Insomnia from worry",
+        "Sleep tips for anxiety",
+        "Anxiety keeps me awake"
+      ],
+      "responses": [
+        "Create a consistent sleep schedule by going to bed and waking up at the same time every day, even on weekends. This helps regulate your body's internal clock.",
+        "Try a 'worry journal' before bed. Write down your concerns and a brief action plan for each. This helps get anxious thoughts out of your head.",
+        "Create a calming bedtime routine: dim the lights, avoid screens for an hour before bed, take a warm bath, or practice gentle stretching. This signals to your body it's time to sleep."
+      ]
+    },
+    {
+      "tag": "panic_attack",
+      "patterns": [
+        "I'm having a panic attack",
+        "Help with panic attack",
+        "Panic attack symptoms",
+        "What to do during panic attack",
+        "I feel like I'm dying",
+        "Can't breathe panic"
+      ],
+      "responses": [
+        "During a panic attack, focus on your breathing. Try breathing in for 4 counts and out for 6 counts. Remember that panic attacks are temporary and will pass.",
+        "Use the 5-4-3-2-1 technique: Name 5 things you can see, 4 things you can touch, 3 things you can hear, 2 things you can smell, and 1 thing you can taste. This grounds you in the present.",
+        "Remind yourself that panic attacks, while frightening, are not dangerous. Your body's alarm system is misfiring. Continue slow, deep breathing and know this will pass in a few minutes."
+      ]
+    },
+    {
+      "tag": "help",
+      "patterns": [
+        "What can you do",
+        "How can you help me",
+        "What are your capabilities",
+        "Tell me what you do",
+        "How does this work"
+      ],
+      "responses": [
+        "I'm Fahamu, an AI assistant specialized in anxiety therapy. I can provide coping strategies, guide you through breathing exercises, offer cognitive techniques, and suggest resources. Would you like to try any of these?",
+        "I'm here to support your mental wellness journey by providing evidence-based techniques for managing anxiety, guiding relaxation exercises, and offering a space to express your feelings. How can I help you today?",
+        "As your mental wellness companion, I can help with anxiety management through breathing exercises, grounding techniques, cognitive restructuring, and general wellness advice. What specific area would you like help with?"
+      ]
+    }
+  ]
+}
