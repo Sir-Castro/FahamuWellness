@@ -423,8 +423,8 @@ a:hover {
 
 /* Chat Interface */
 .chat-container {
-  height: 80vh;
-  max-height: 700px;
+  height: 85vh;
+  max-height: 800px;
   display: flex;
   flex-direction: column;
   background-color: var(--neutral-100);
@@ -1033,31 +1033,40 @@ a:hover {
   margin-bottom: 15px;
   overflow: hidden;
   max-height: 80px;
-  transition: max-height var(--transition-normal) ease;
+  transition: all var(--transition-normal) ease;
+  position: relative;
 }
 
 .suggested-prompts.expanded {
-  max-height: 200px;
+  max-height: 300px;
   overflow-y: auto;
+  background-color: var(--primary-light);
+  padding: var(--space-3);
+  border-radius: var(--radius-lg);
 }
 
 .suggested-prompts-toggle {
-  background-color: var(--neutral-300);
+  position: absolute;
+  right: 0;
+  top: 0;
+  background-color: var(--primary-light);
   border: none;
-  color: var(--neutral-700);
-  border-radius: var(--radius-full);
-  width: 32px;
-  height: 32px;
+  color: var(--primary-dark);
+  border-radius: 50%;
+  width: 34px;
+  height: 34px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   transition: all var(--transition-fast) ease;
-  margin-left: auto;
+  z-index: 2;
+  box-shadow: var(--shadow-sm);
 }
 
 .suggested-prompts-toggle:hover {
-  background-color: var(--neutral-400);
+  background-color: var(--primary-color);
+  color: white;
 }
 
 .suggested-prompt {
@@ -1073,9 +1082,28 @@ a:hover {
   align-items: center;
 }
 
+/* Collapsed state - show only icons */
+.suggested-prompts:not(.expanded) .suggested-prompt {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  justify-content: center;
+}
+
+.suggested-prompts:not(.expanded) .suggested-prompt span {
+  display: none;
+}
+
 .suggested-prompt i {
-  margin-right: var(--space-2);
   font-size: var(--text-base);
+}
+
+.suggested-prompts:not(.expanded) .suggested-prompt i {
+  margin-right: 0;
+}
+
+.suggested-prompts.expanded .suggested-prompt i {
+  margin-right: var(--space-2);
 }
 
 .suggested-prompt:hover {

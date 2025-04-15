@@ -224,25 +224,52 @@ class VoiceProcessor {
             this.voices = this.synthesis.getVoices();
         }
         
+        // Define language pattern to match English voices
+        const languagePattern = /^en(-[A-Z]{2})?$/;
+        
+        // Define comprehensive lists of name patterns that typically indicate gender
+        const femalePatterns = [
+            'female', 'woman', 'girl', 'lisa', 'sarah', 'karen', 'moira', 'samantha',
+            'victoria', 'fiona', 'tessa', 'monica', 'kathy', 'susan', 'amy', 'emma',
+            'joanna', 'salli', 'kimberly', 'nicole', 'ivy', 'ava'
+        ];
+        
+        const malePatterns = [
+            'male', 'man', 'guy', 'boy', 'david', 'james', 'john', 'mark', 'paul',
+            'daniel', 'thomas', 'matthew', 'robert', 'michael', 'brian', 'kevin',
+            'george', 'william', 'joseph', 'richard', 'charles', 'alex'
+        ];
+        
+        // Select pattern list based on voice type
+        const patterns = voiceType === 'male' ? malePatterns : femalePatterns;
+        
         // Try to find a matching voice
         let preferredVoice = this.voices.find(voice => {
+            // First ensure it's an English voice
+            const isEnglish = languagePattern.test(voice.lang);
+            if (!isEnglish) return false;
+            
+            // Then check the name against patterns
             const voiceName = voice.name.toLowerCase();
-            if (voiceType === 'male') {
-                return voiceName.includes('male') || 
-                       voiceName.includes('david') || 
-                       voiceName.includes('james') || 
-                       voiceName.includes('daniel');
-            } else {
-                return voiceName.includes('female') || 
-                       voiceName.includes('lisa') || 
-                       voiceName.includes('sarah') || 
-                       voiceName.includes('karen');
-            }
+            return patterns.some(pattern => voiceName.includes(pattern));
         });
         
-        // If no matching voice found, use the first available
-        if (!preferredVoice && this.voices.length > 0) {
-            preferredVoice = this.voices[0];
+        // Log voice selection for debugging
+        console.log(`Voice selection for ${voiceType}:`, preferredVoice?.name || 'No matching voice found');
+        
+        // If no matching voice found, use any English voice
+        if (!preferredVoice) {
+            // Filter to just English voices
+            const englishVoices = this.voices.filter(voice => languagePattern.test(voice.lang));
+            
+            if (englishVoices.length > 0) {
+                console.log(`Using fallback English voice: ${englishVoices[0].name}`);
+                preferredVoice = englishVoices[0];
+            } else if (this.voices.length > 0) {
+                // Last resort - use any available voice
+                console.log(`Using fallback to any voice: ${this.voices[0].name}`);
+                preferredVoice = this.voices[0];
+            }
         }
         
         return preferredVoice;
