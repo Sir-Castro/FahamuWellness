@@ -137,36 +137,18 @@
     </div>
     
     <div class="col-lg-4">
-        <!-- Voice Preferences Form -->
+        <!-- Voice Settings Link -->
         <div class="card mb-4">
             <div class="card-header">
-                <h3>Voice Preferences</h3>
+                <h3>Voice Settings</h3>
             </div>
             <div class="card-body">
-                <form method="POST" action="{{ url_for('profile') }}">
-                    {{ voice_form.hidden_tag() }}
-                    
-                    <div class="form-group mb-3">
-                        {{ voice_form.voice_gender.label(class="form-label") }}
-                        {{ voice_form.voice_gender(class="form-control") }}
-                    </div>
-                    
-                    <div class="form-group mb-3">
-                        {{ voice_form.voice_pitch.label(class="form-label") }}
-                        {{ voice_form.voice_pitch(class="form-control") }}
-                        <small class="form-text text-muted">1.0 is the default pitch. Lower values make the voice deeper, higher values make it higher-pitched.</small>
-                    </div>
-                    
-                    <div class="form-group mb-3">
-                        {{ voice_form.voice_speed.label(class="form-label") }}
-                        {{ voice_form.voice_speed(class="form-control") }}
-                        <small class="form-text text-muted">1.0 is the default speed. Lower values slow down the voice, higher values speed it up.</small>
-                    </div>
-                    
-                    <div class="d-grid">
-                        {{ voice_form.submit(class="btn btn-primary") }}
-                    </div>
-                </form>
+                <p>Customize Fahamu's voice to make your conversations more comfortable.</p>
+                <div class="d-grid">
+                    <a href="{{ url_for('settings') }}" class="btn btn-primary">
+                        <i class="fas fa-sliders-h me-2"></i> Voice Settings
+                    </a>
+                </div>
             </div>
         </div>
         

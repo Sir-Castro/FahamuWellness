@@ -2,111 +2,100 @@
 
 {% block title %}Voice Settings - Fahamu{% endblock %}
 
-{% block additional_css %}
-<style>
-    .slider-container {
-        margin-bottom: 1.5rem;
-    }
-    
-    .slider-value-display {
-        text-align: center;
-        margin-top: 0.5rem;
-        font-weight: bold;
-        color: var(--primary-color);
-    }
-</style>
-{% endblock %}
-
 {% block content %}
-<div class="section">
-    <div class="section-header">
-        <h1 class="text-center">Voice Settings</h1>
-        <p class="text-center mb-5">Customize how Fahamu speaks to you</p>
-    </div>
-    
-    <div class="row">
-        <div class="col-md-8 mx-auto">
-            <div class="card p-4">
-                <form action="{{ url_for('settings') }}" method="POST">
+<div class="row">
+    <div class="col-lg-8 mx-auto">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h2><i class="fas fa-sliders-h me-2"></i> Voice Settings</h2>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('settings') }}">
                     {{ form.hidden_tag() }}
                     
-                    <div class="voice-selection mb-5">
-                        <h3 class="mb-3">Voice Gender</h3>
-                        <div class="voice-options">
-                            <div class="voice-option-card {% if current_user.voice_preference == 'female' %}selected{% endif %}" data-value="female">
-                                <div class="voice-option-icon">
-                                    <i class="fas fa-female"></i>
-                                </div>
-                                <div class="voice-option-info">
-                                    <h4 class="voice-option-name">Female Voice</h4>
-                                    <p class="voice-option-description">A clear, gentle female voice</p>
-                                </div>
-                                <button type="button" class="voice-sample-btn" data-voice="female">
-                                    <i class="fas fa-play"></i>
-                                </button>
-                            </div>
-                            
-                            <div class="voice-option-card mt-3 {% if current_user.voice_preference == 'male' %}selected{% endif %}" data-value="male">
-                                <div class="voice-option-icon">
-                                    <i class="fas fa-male"></i>
-                                </div>
-                                <div class="voice-option-info">
-                                    <h4 class="voice-option-name">Male Voice</h4>
-                                    <p class="voice-option-description">A calm, soothing male voice</p>
-                                </div>
-                                <button type="button" class="voice-sample-btn" data-voice="male">
-                                    <i class="fas fa-play"></i>
-                                </button>
-                            </div>
-                            
-                            {{ form.voice_gender(class="d-none", id="voice-gender-input") }}
+                    <div class="form-group mb-4">
+                        {{ form.voice_gender.label(class="form-label fs-5") }}
+                        {{ form.voice_gender(class="form-select") }}
+                        <div class="form-text">
+                            Choose between a male or female voice for Fahamu's responses.
                         </div>
                     </div>
                     
-                    <div class="slider-container">
-                        <h3 class="mb-3">Voice Pitch</h3>
-                        <p class="mb-2">Adjust how high or low the voice sounds</p>
-                        <div class="range-input-container">
-                            {{ form.voice_pitch(class="form-range", id="voice-pitch-slider", min="0.5", max="2.0", step="0.1") }}
-                            <div class="range-labels">
-                                <span>Lower</span>
-                                <span>Default</span>
-                                <span>Higher</span>
-                            </div>
-                            <div class="slider-value-display" id="pitch-value">{{ current_user.voice_pitch }}</div>
+                    <div class="form-group mb-4">
+                        {{ form.voice_pitch.label(class="form-label fs-5") }}
+                        <div class="d-flex align-items-center">
+                            <div class="range-label me-3">Deeper</div>
+                            {{ form.voice_pitch(class="form-range", id="voice-pitch") }}
+                            <div class="range-label ms-3">Higher</div>
                         </div>
-                        <button type="button" class="btn btn-sm btn-outline mt-2" id="test-pitch-btn">
-                            <i class="fas fa-play me-2"></i> Test This Pitch
-                        </button>
-                    </div>
-                    
-                    <div class="slider-container">
-                        <h3 class="mb-3">Voice Speed</h3>
-                        <p class="mb-2">Adjust how fast or slow the voice speaks</p>
-                        <div class="range-input-container">
-                            {{ form.voice_speed(class="form-range", id="voice-speed-slider", min="0.5", max="2.0", step="0.1") }}
-                            <div class="range-labels">
-                                <span>Slower</span>
-                                <span>Default</span>
-                                <span>Faster</span>
-                            </div>
-                            <div class="slider-value-display" id="speed-value">{{ current_user.voice_speed }}</div>
+                        <div class="text-center">
+                            <span id="voice-pitch-value">{{ form.voice_pitch.data }}</span>
                         </div>
-                        <button type="button" class="btn btn-sm btn-outline mt-2" id="test-speed-btn">
-                            <i class="fas fa-play me-2"></i> Test This Speed
-                        </button>
+                        <div class="form-text">
+                            Adjust the pitch of Fahamu's voice. Default is 1.0. Lower values make the voice deeper, higher values make it higher-pitched.
+                        </div>
                     </div>
                     
-                    <div class="voice-preview-container text-center py-4 my-4">
-                        <h3 class="mb-3">Preview Your Voice Settings</h3>
-                        <p class="mb-3">Click the button below to hear how your voice settings sound together</p>
-                        <button type="button" class="btn btn-primary" id="preview-voice-btn">
-                            <i class="fas fa-headphones me-2"></i> Preview Voice
-                        </button>
+                    <div class="form-group mb-4">
+                        {{ form.voice_speed.label(class="form-label fs-5") }}
+                        <div class="d-flex align-items-center">
+                            <div class="range-label me-3">Slower</div>
+                            {{ form.voice_speed(class="form-range", id="voice-speed") }}
+                            <div class="range-label ms-3">Faster</div>
+                        </div>
+                        <div class="text-center">
+                            <span id="voice-speed-value">{{ form.voice_speed.data }}</span>
+                        </div>
+                        <div class="form-text">
+                            Adjust the speaking rate of Fahamu's voice. Default is 1.0. Lower values slow down the voice, higher values speed it up.
+                        </div>
                     </div>
                     
-                    <div class="form-actions text-center">
-                        {{ form.submit(class="btn btn-lg btn-primary") }}
+                    <div class="my-4">
+                        <button type="button" id="test-voice" class="btn btn-outline">
+                            <i class="fas fa-volume-up me-2"></i> Test Voice
+                        </button>
+                        <div class="text-muted mt-2">
+                            Click to test the current voice settings
+                        </div>
+                    </div>
+                    
+                    <hr class="my-4">
+                    
+                    <h3>Additional Voice Options</h3>
+                    
+                    <div class="form-check form-switch mb-3">
+                        <input class="form-check-input" type="checkbox" id="auto-speak" checked>
+                        <label class="form-check-label" for="auto-speak">
+                            Auto-speak responses
+                        </label>
+                        <div class="form-text">
+                            Automatically speak Fahamu's responses when received
+                        </div>
+                    </div>
+                    
+                    <div class="form-check form-switch mb-3">
+                        <input class="form-check-input" type="checkbox" id="continuous-mode">
+                        <label class="form-check-label" for="continuous-mode">
+                            Continuous listening mode
+                        </label>
+                        <div class="form-text">
+                            Enable continuous voice recognition (no need to click the microphone repeatedly)
+                        </div>
+                    </div>
+                    
+                    <div class="form-check form-switch mb-3">
+                        <input class="form-check-input" type="checkbox" id="auto-submit">
+                        <label class="form-check-label" for="auto-submit">
+                            Auto-submit after speech
+                        </label>
+                        <div class="form-text">
+                            Automatically send your message after speech recognition is complete
+                        </div>
+                    </div>
+                    
+                    <div class="d-grid mt-4">
+                        {{ form.submit(class="btn btn-primary btn-lg") }}
                     </div>
                 </form>
             </div>
@@ -116,107 +105,83 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="{{ url_for('static', filename='js/voice.js') }}"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Initialize voice processor
-        const voiceProcessor = new VoiceProcessor({
-            pitch: {{ current_user.voice_pitch }},
-            speed: {{ current_user.voice_speed }},
-            voiceType: '{{ current_user.voice_preference }}'
-        });
+        // Range input value display
+        const pitchRange = document.getElementById('voice-pitch');
+        const pitchValue = document.getElementById('voice-pitch-value');
+        const speedRange = document.getElementById('voice-speed');
+        const speedValue = document.getElementById('voice-speed-value');
         
-        // Elements
-        const voiceGenderInput = document.getElementById('voice-gender-input');
-        const voiceOptionCards = document.querySelectorAll('.voice-option-card');
-        const voiceSampleBtns = document.querySelectorAll('.voice-sample-btn');
-        const pitchSlider = document.getElementById('voice-pitch-slider');
-        const speedSlider = document.getElementById('voice-speed-slider');
-        const pitchValue = document.getElementById('pitch-value');
-        const speedValue = document.getElementById('speed-value');
-        const testPitchBtn = document.getElementById('test-pitch-btn');
-        const testSpeedBtn = document.getElementById('test-speed-btn');
-        const previewVoiceBtn = document.getElementById('preview-voice-btn');
-        
-        // Handle voice option selection
-        voiceOptionCards.forEach(card => {
-            card.addEventListener('click', function() {
-                // Update UI
-                voiceOptionCards.forEach(c => c.classList.remove('selected'));
-                this.classList.add('selected');
-                
-                // Update hidden input
-                const voiceValue = this.dataset.value;
-                voiceGenderInput.value = voiceValue;
-                
-                // Update voice processor
-                voiceProcessor.updateVoiceSettings({
-                    voiceType: voiceValue
-                });
+        if (pitchRange && pitchValue) {
+            pitchRange.addEventListener('input', function() {
+                pitchValue.textContent = parseFloat(this.value).toFixed(1);
             });
-        });
+        }
         
-        // Handle slider changes
-        pitchSlider.addEventListener('input', function() {
-            pitchValue.textContent = this.value;
-            voiceProcessor.updateVoiceSettings({
-                pitch: parseFloat(this.value)
+        if (speedRange && speedValue) {
+            speedRange.addEventListener('input', function() {
+                speedValue.textContent = parseFloat(this.value).toFixed(1);
             });
-        });
+        }
         
-        speedSlider.addEventListener('input', function() {
-            speedValue.textContent = this.value;
-            voiceProcessor.updateVoiceSettings({
-                speed: parseFloat(this.value)
-            });
-        });
-        
-        // Handle sample buttons
-        voiceSampleBtns.forEach(btn => {
-            btn.addEventListener('click', function(e) {
-                e.stopPropagation(); // Prevent triggering parent card click
-                const voiceType = this.dataset.voice;
+        // Test voice button
+        const testVoiceBtn = document.getElementById('test-voice');
+        if (testVoiceBtn && window.voiceProcessor) {
+            testVoiceBtn.addEventListener('click', function() {
+                // Update voice processor with current settings
+                const voiceType = document.getElementById('voice_gender').value;
+                const pitch = parseFloat(document.getElementById('voice-pitch').value);
+                const speed = parseFloat(document.getElementById('voice-speed').value);
                 
-                // Save current settings
-                const currentSettings = {
-                    voiceType: voiceProcessor.settings.voiceType,
-                    pitch: voiceProcessor.settings.pitch,
-                    speed: voiceProcessor.settings.speed
-                };
-                
-                // Temporarily use this voice type
-                voiceProcessor.updateVoiceSettings({
-                    voiceType: voiceType
+                window.voiceProcessor.updateVoiceSettings({
+                    voiceType: voiceType,
+                    pitch: pitch,
+                    speed: speed
                 });
                 
-                // Speak sample text
-                voiceProcessor.speak("Hello, I'm your Fahamu assistant. How are you feeling today?");
-                
-                // Restore previous settings after speaking
-                setTimeout(() => {
-                    voiceProcessor.updateVoiceSettings(currentSettings);
-                }, 1000);
+                // Speak test phrase
+                window.voiceProcessor.speak("Hello, this is Fahamu with your current voice settings. How does this sound?");
             });
-        });
+        }
         
-        // Test pitch button
-        testPitchBtn.addEventListener('click', function() {
-            const pitch = parseFloat(pitchSlider.value);
-            voiceProcessor.updateVoiceSettings({ pitch: pitch });
-            voiceProcessor.speak("This is how I sound with this pitch level.");
-        });
+        // Voice options checkboxes - save to localStorage
+        const autoSpeakCheck = document.getElementById('auto-speak');
+        const continuousModeCheck = document.getElementById('continuous-mode');
+        const autoSubmitCheck = document.getElementById('auto-submit');
         
-        // Test speed button
-        testSpeedBtn.addEventListener('click', function() {
-            const speed = parseFloat(speedSlider.value);
-            voiceProcessor.updateVoiceSettings({ speed: speed });
-            voiceProcessor.speak("This is how I sound with this speech rate.");
-        });
+        // Load saved settings
+        if (autoSpeakCheck) {
+            const savedAutoSpeak = localStorage.getItem('auto-speak');
+            autoSpeakCheck.checked = savedAutoSpeak !== null ? savedAutoSpeak === 'true' : true;
+            
+            autoSpeakCheck.addEventListener('change', function() {
+                localStorage.setItem('auto-speak', this.checked);
+            });
+        }
         
-        // Preview all settings
-        previewVoiceBtn.addEventListener('click', function() {
-            voiceProcessor.speak("Hello, I'm your Fahamu assistant with your custom voice settings. I'm here to support your mental health journey. How can I help you today?");
-        });
+        if (continuousModeCheck) {
+            const savedContinuousMode = localStorage.getItem('continuous-mode');
+            continuousModeCheck.checked = savedContinuousMode === 'true';
+            
+            continuousModeCheck.addEventListener('change', function() {
+                localStorage.setItem('continuous-mode', this.checked);
+                
+                // Update voice processor if available
+                if (window.voiceProcessor) {
+                    window.voiceProcessor.setContinuousMode(this.checked);
+                }
+            });
+        }
+        
+        if (autoSubmitCheck) {
+            const savedAutoSubmit = localStorage.getItem('auto-submit');
+            autoSubmitCheck.checked = savedAutoSubmit === 'true';
+            
+            autoSubmitCheck.addEventListener('change', function() {
+                localStorage.setItem('auto-submit', this.checked);
+            });
+        }
     });
 </script>
 {% endblock %}
