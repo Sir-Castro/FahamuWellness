@@ -4,266 +4,150 @@
  */
 
 document.addEventListener('DOMContentLoaded', function() {
-    // DOM Elements
-    const chatBody = document.querySelector('.chat-body');
+    // DOM Elements - Text Chat Interface
+    const textChatContainer = document.querySelector('.text-chat-container');
+    const textChatBody = textChatContainer?.querySelector('.chat-body');
     const chatForm = document.querySelector('.chat-form');
     const chatInput = document.querySelector('.chat-input');
-    const voiceToggle = document.querySelector('.chat-voice-toggle');
     const introMessage = document.querySelector('#intro-message');
     const suggestedPrompts = document.querySelector('.suggested-prompts');
-    const messageStatus = document.querySelector('.message-status');
+    const suggestedPromptsToggle = document.querySelector('.suggested-prompts-toggle');
     
-    // Voice related variables
-    let isListening = false;
-    let recognition = null;
-    let synthesis = window.speechSynthesis;
-    let speechConfig = {
-        voice: null,
-        pitch: parseFloat(document.querySelector('#voice-pitch-value').textContent) || 1,
-        rate: parseFloat(document.querySelector('#voice-speed-value').textContent) || 1,
-        voiceType: document.querySelector('#voice-preference').value || 'female'
-    };
+    // DOM Elements - Voice Chat Interface
+    const voiceChatContainer = document.querySelector('.voice-chat-container');
+    const voiceChatBody = voiceChatContainer?.querySelector('.chat-body');
+    
+    // Chat mode switcher
+    const chatModeOptions = document.querySelectorAll('.chat-mode-option');
     
     // Initialize the chat interface
     function initChat() {
-        // Setup SpeechRecognition if supported
-        setupSpeechRecognition();
-        
-        // Setup speech synthesis
-        setupSpeechSynthesis();
-        
-        // Add event listeners
+        // Setup event listeners
         setupEventListeners();
         
         // Display suggested prompts
         displaySuggestedPrompts();
         
-        // Add welcome message
+        // Add welcome message to both chat interfaces
         if (introMessage && introMessage.textContent) {
-            addBotMessage(introMessage.textContent);
-        } else {
-            addBotMessage("Hello! I'm Fahamu, your anxiety therapy assistant. How are you feeling today?");
-        }
-    }
-    
-    // Setup Web Speech API for speech recognition
-    function setupSpeechRecognition() {
-        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        
-        if (SpeechRecognition) {
-            recognition = new SpeechRecognition();
-            recognition.continuous = false;
-            recognition.interimResults = false;
-            recognition.lang = 'en-US';
-            
-            recognition.onstart = function() {
-                isListening = true;
-                voiceToggle.classList.add('chat-voice-active');
-                updateMessageStatus('Listening...');
-            };
-            
-            recognition.onresult = function(event) {
-                const transcript = event.results[0][0].transcript;
-                chatInput.value = transcript;
-                updateMessageStatus('Processing...');
-                
-                // Simulate form submission
-                setTimeout(() => {
-                    chatForm.dispatchEvent(new Event('submit'));
-                }, 500);
-            };
-            
-            recognition.onend = function() {
-                isListening = false;
-                voiceToggle.classList.remove('chat-voice-active');
-                updateMessageStatus('');
-            };
-            
-            recognition.onerror = function(event) {
-                console.error('Speech recognition error:', event.error);
-                isListening = false;
-                voiceToggle.classList.remove('chat-voice-active');
-                updateMessageStatus('Speech recognition error. Please try again.');
-                
-                setTimeout(() => {
-                    updateMessageStatus('');
-                }, 3000);
-            };
-        } else {
-            console.warn('Speech Recognition API not supported in this browser');
-            voiceToggle.style.display = 'none';
-        }
-    }
-    
-    // Setup Web Speech API for speech synthesis
-    function setupSpeechSynthesis() {
-        if ('speechSynthesis' in window) {
-            // Get available voices
-            let voices = [];
-            
-            function setVoices() {
-                voices = synthesis.getVoices();
-                
-                // Set default voice based on preference
-                if (voices.length > 0) {
-                    speechConfig.voice = findVoice(speechConfig.voiceType);
-                }
+            // Add to text chat
+            if (textChatBody) {
+                addBotMessage(textChatBody, introMessage.textContent);
             }
             
-            // Chrome loads voices asynchronously
-            if (synthesis.onvoiceschanged !== undefined) {
-                synthesis.onvoiceschanged = setVoices;
-            }
-            
-            // Set initial voices
-            setVoices();
-            
-            // Update voice settings if controls exist
-            const voiceGenderSelect = document.querySelector('#voice-gender');
-            const voicePitchRange = document.querySelector('#voice-pitch');
-            const voiceSpeedRange = document.querySelector('#voice-speed');
-            
-            if (voiceGenderSelect) {
-                voiceGenderSelect.addEventListener('change', function() {
-                    speechConfig.voiceType = this.value;
-                    speechConfig.voice = findVoice(speechConfig.voiceType);
-                });
-            }
-            
-            if (voicePitchRange) {
-                voicePitchRange.addEventListener('input', function() {
-                    speechConfig.pitch = parseFloat(this.value);
-                    document.querySelector('#voice-pitch-value').textContent = this.value;
-                });
-            }
-            
-            if (voiceSpeedRange) {
-                voiceSpeedRange.addEventListener('input', function() {
-                    speechConfig.rate = parseFloat(this.value);
-                    document.querySelector('#voice-speed-value').textContent = this.value;
-                });
+            // Add to voice chat
+            if (voiceChatBody) {
+                addBotMessage(voiceChatBody, introMessage.textContent);
             }
         } else {
-            console.warn('Speech Synthesis API not supported in this browser');
-        }
-    }
-    
-    // Find appropriate voice based on gender preference
-    function findVoice(voiceType) {
-        const voices = synthesis.getVoices();
-        
-        // Try to find a matching voice
-        let preferredVoice = voices.find(voice => {
-            const voiceName = voice.name.toLowerCase();
-            if (voiceType === 'male') {
-                return voiceName.includes('male') || 
-                       (voiceName.includes('david') || 
-                        voiceName.includes('james') || 
-                        voiceName.includes('daniel'));
-            } else {
-                return voiceName.includes('female') || 
-                       (voiceName.includes('lisa') || 
-                        voiceName.includes('sarah') || 
-                        voiceName.includes('karen'));
-            }
-        });
-        
-        // If no matching voice found, use the first available
-        if (!preferredVoice && voices.length > 0) {
-            preferredVoice = voices[0];
-        }
-        
-        return preferredVoice;
-    }
-    
-    // Speak text using speech synthesis
-    function speakText(text) {
-        if ('speechSynthesis' in window) {
-            // Stop any current speech
-            if (synthesis.speaking) {
-                synthesis.cancel();
+            const defaultGreeting = "Hello! I'm Fahamu, your mental wellness companion. How are you feeling today?";
+            
+            // Add to text chat
+            if (textChatBody) {
+                addBotMessage(textChatBody, defaultGreeting);
             }
             
-            const utterance = new SpeechSynthesisUtterance(text);
-            
-            // Set speech properties
-            utterance.voice = speechConfig.voice;
-            utterance.pitch = speechConfig.pitch;
-            utterance.rate = speechConfig.rate;
-            
-            // Speak the text
-            synthesis.speak(utterance);
+            // Add to voice chat
+            if (voiceChatBody) {
+                addBotMessage(voiceChatBody, defaultGreeting);
+            }
         }
     }
     
     // Setup event listeners
     function setupEventListeners() {
-        // Handle chat form submission
-        chatForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const message = chatInput.value.trim();
-            
-            if (message) {
-                // Add user message to chat
-                addUserMessage(message);
+        // Handle chat form submission in text chat
+        if (chatForm) {
+            chatForm.addEventListener('submit', function(e) {
+                e.preventDefault();
                 
-                // Clear input
-                chatInput.value = '';
+                const message = chatInput.value.trim();
                 
-                // Show typing indicator
-                showTypingIndicator();
-                
-                // Send message to server
-                sendMessage(message);
-            }
-        });
-        
-        // Toggle voice recognition
-        voiceToggle.addEventListener('click', function() {
-            if (recognition) {
-                if (isListening) {
-                    recognition.stop();
-                } else {
-                    recognition.start();
+                if (message) {
+                    // Add user message to chat
+                    addUserMessage(textChatBody, message);
+                    
+                    // Clear input
+                    chatInput.value = '';
+                    
+                    // Show typing indicator
+                    showTypingIndicator(textChatBody);
+                    
+                    // Send message to server
+                    sendMessage(textChatBody, message);
                 }
-            }
-        });
+            });
+        }
         
         // Suggested prompts click
         if (suggestedPrompts) {
             suggestedPrompts.addEventListener('click', function(e) {
-                if (e.target.classList.contains('suggested-prompt')) {
-                    chatInput.value = e.target.textContent;
+                const promptEl = e.target.closest('.suggested-prompt');
+                if (promptEl) {
+                    const promptText = promptEl.textContent.trim();
+                    chatInput.value = promptText;
                     chatForm.dispatchEvent(new Event('submit'));
+                    
+                    // Hide expanded suggestions if open
+                    if (suggestedPrompts.classList.contains('expanded')) {
+                        suggestedPrompts.classList.remove('expanded');
+                        if (suggestedPromptsToggle && suggestedPromptsToggle.querySelector('i')) {
+                            suggestedPromptsToggle.querySelector('i').className = 'fas fa-lightbulb';
+                            suggestedPromptsToggle.title = 'Show more suggestions';
+                        }
+                    }
                 }
             });
         }
     }
     
-    // Display suggested prompts
+    // Display suggested prompts with icons and categories
     function displaySuggestedPrompts() {
         if (suggestedPrompts) {
+            // Clear existing prompts except for the toggle button
+            const toggle = suggestedPrompts.querySelector('.suggested-prompts-toggle');
+            suggestedPrompts.innerHTML = '';
+            if (toggle) {
+                suggestedPrompts.appendChild(toggle);
+            }
+            
             const prompts = [
-                "I've been feeling anxious lately",
-                "What breathing exercises help with anxiety?",
-                "I'm having trouble sleeping",
-                "How can I calm my racing thoughts?",
-                "Tell me about mindfulness",
-                "What to do during a panic attack"
+                { text: "I've been feeling anxious lately", icon: "fas fa-heart", category: "feelings" },
+                { text: "What breathing exercises help with anxiety?", icon: "fas fa-wind", category: "techniques" },
+                { text: "I'm having trouble sleeping", icon: "fas fa-moon", category: "symptoms" },
+                { text: "How can I calm my racing thoughts?", icon: "fas fa-brain", category: "symptoms" },
+                { text: "Tell me about mindfulness", icon: "fas fa-leaf", category: "techniques" },
+                { text: "What to do during a panic attack", icon: "fas fa-exclamation-circle", category: "emergency" },
+                { text: "I feel overwhelmed at work", icon: "fas fa-briefcase", category: "situations" },
+                { text: "Techniques for social anxiety", icon: "fas fa-users", category: "techniques" },
+                { text: "How to handle uncertainty", icon: "fas fa-question-circle", category: "coping" },
+                { text: "I'm worried about the future", icon: "fas fa-clock", category: "feelings" },
+                { text: "Ways to improve my mood", icon: "fas fa-smile", category: "techniques" },
+                { text: "How to start meditation", icon: "fas fa-om", category: "techniques" }
             ];
             
-            prompts.forEach(prompt => {
-                const promptElement = document.createElement('button');
+            // Initially add just the first 6 prompts
+            const initialPrompts = prompts.slice(0, 6);
+            initialPrompts.forEach(prompt => {
+                const promptElement = document.createElement('div');
                 promptElement.className = 'suggested-prompt';
-                promptElement.textContent = prompt;
+                promptElement.innerHTML = `<i class="${prompt.icon}"></i> ${prompt.text}`;
+                suggestedPrompts.appendChild(promptElement);
+            });
+            
+            // Add the remaining prompts (will be shown when expanded)
+            const additionalPrompts = prompts.slice(6);
+            additionalPrompts.forEach(prompt => {
+                const promptElement = document.createElement('div');
+                promptElement.className = 'suggested-prompt';
+                promptElement.innerHTML = `<i class="${prompt.icon}"></i> ${prompt.text}`;
                 suggestedPrompts.appendChild(promptElement);
             });
         }
     }
     
     // Send message to server
-    function sendMessage(message) {
+    function sendMessage(chatBody, message) {
         fetch('/send_message', {
             method: 'POST',
             headers: {
@@ -274,28 +158,30 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(response => response.json())
         .then(data => {
             // Hide typing indicator
-            hideTypingIndicator();
+            hideTypingIndicator(chatBody);
             
             // Add bot response to chat
-            addBotMessage(data.response);
+            addBotMessage(chatBody, data.response);
             
-            // Speak the response if needed
-            if (document.querySelector('#auto-speak') && 
-                document.querySelector('#auto-speak').checked) {
-                speakText(data.response);
+            // Speak the response if auto-speak is enabled
+            const autoSpeak = document.querySelector('#auto-speak');
+            if (autoSpeak && autoSpeak.checked && window.voiceProcessor) {
+                window.voiceProcessor.speak(data.response);
             }
         })
         .catch(error => {
             console.error('Error sending message:', error);
-            hideTypingIndicator();
-            addBotMessage("I'm sorry, there was an error processing your message. Please try again.");
+            hideTypingIndicator(chatBody);
+            addBotMessage(chatBody, "I'm sorry, there was an error processing your message. Please try again.");
         });
     }
     
     // Add user message to chat
-    function addUserMessage(message) {
+    function addUserMessage(chatBody, message) {
+        if (!chatBody) return;
+        
         const messageElement = document.createElement('div');
-        messageElement.className = 'message message-user';
+        messageElement.className = 'message message-user animate__animated animate__fadeIn';
         messageElement.textContent = message;
         
         const timestamp = document.createElement('div');
@@ -310,9 +196,11 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // Add bot message to chat
-    function addBotMessage(message) {
+    function addBotMessage(chatBody, message) {
+        if (!chatBody) return;
+        
         const messageElement = document.createElement('div');
-        messageElement.className = 'message message-bot';
+        messageElement.className = 'message message-bot animate__animated animate__fadeIn';
         messageElement.textContent = message;
         
         const timestamp = document.createElement('div');
@@ -327,7 +215,9 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // Show typing indicator
-    function showTypingIndicator() {
+    function showTypingIndicator(chatBody) {
+        if (!chatBody) return;
+        
         const typingElement = document.createElement('div');
         typingElement.className = 'message-typing';
         typingElement.innerHTML = `
@@ -336,7 +226,7 @@ document.addEventListener('DOMContentLoaded', function() {
             <div class="typing-dot"></div>
         `;
         
-        typingElement.id = 'typing-indicator';
+        typingElement.id = 'typing-indicator-' + (chatBody === textChatBody ? 'text' : 'voice');
         chatBody.appendChild(typingElement);
         
         // Scroll to bottom
@@ -344,17 +234,13 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // Hide typing indicator
-    function hideTypingIndicator() {
-        const typingElement = document.getElementById('typing-indicator');
+    function hideTypingIndicator(chatBody) {
+        if (!chatBody) return;
+        
+        const indicatorId = 'typing-indicator-' + (chatBody === textChatBody ? 'text' : 'voice');
+        const typingElement = document.getElementById(indicatorId);
         if (typingElement) {
             typingElement.remove();
-        }
-    }
-    
-    // Update message status
-    function updateMessageStatus(status) {
-        if (messageStatus) {
-            messageStatus.textContent = status;
         }
     }
     

@@ -156,17 +156,8 @@ def send_message():
 @app.route('/profile', methods=['GET', 'POST'])
 @login_required
 def profile():
-    voice_form = VoicePreferenceForm()
     assessment_form = AnxietyAssessmentForm()
     checkpoint_form = CheckpointForm()
-    
-    if voice_form.submit.data and voice_form.validate_on_submit():
-        current_user.voice_preference = voice_form.voice_gender.data
-        current_user.voice_pitch = voice_form.voice_pitch.data
-        current_user.voice_speed = voice_form.voice_speed.data
-        db.session.commit()
-        flash('Voice preferences updated!', 'success')
-        return redirect(url_for('profile'))
     
     if assessment_form.submit.data and assessment_form.validate_on_submit():
         # Calculate GAD-7 score
@@ -194,21 +185,37 @@ def profile():
         flash('New checkpoint added!', 'success')
         return redirect(url_for('profile'))
     
-    # Pre-fill voice form with current user preferences
-    voice_form.voice_gender.data = current_user.voice_preference
-    voice_form.voice_pitch.data = current_user.voice_pitch
-    voice_form.voice_speed.data = current_user.voice_speed
-    
     # Get user's checkpoints and assessments
     checkpoints = Checkpoint.query.filter_by(user_id=current_user.id).order_by(Checkpoint.timestamp.desc()).all()
     assessments = AnxietyAssessment.query.filter_by(user_id=current_user.id).order_by(AnxietyAssessment.timestamp.desc()).all()
     
     return render_template('profile.html', title='Profile', 
-                          voice_form=voice_form, 
                           assessment_form=assessment_form,
                           checkpoint_form=checkpoint_form,
                           checkpoints=checkpoints,
                           assessments=assessments)
+
+@app.route('/settings', methods=['GET', 'POST'])
+@login_required
+def settings():
+    form = VoicePreferenceForm()
+    
+    if form.validate_on_submit():
+        current_user.voice_preference = form.voice_gender.data
+        current_user.voice_pitch = form.voice_pitch.data
+        current_user.voice_speed = form.voice_speed.data
+        db.session.commit()
+        
+        flash('Voice settings updated successfully!', 'success')
+        return redirect(url_for('settings'))
+    
+    # Pre-fill form with current user preferences
+    if request.method == 'GET':
+        form.voice_gender.data = current_user.voice_preference
+        form.voice_pitch.data = current_user.voice_pitch
+        form.voice_speed.data = current_user.voice_speed
+    
+    return render_template('settings.html', title='Voice Settings', form=form)
 
 # Admin routes
 @app.route('/admin')
