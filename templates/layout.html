@@ -6,7 +6,7 @@
     <title>{% block title %}Fahamu - Mental Health Chatbot{% endblock %}</title>
     
     <!-- Favicon -->
-    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <link rel="icon" href="{{ url_for('static', filename='img/logo.svg') }}">
     
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -14,10 +14,13 @@
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
-    <!-- Google Fonts -->
+    <!-- Google Fonts - Updated with more professional fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Open+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Raleway:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Animation Libraries -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
     
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
@@ -27,33 +30,55 @@
 <body>
     <header class="header">
         <div class="container header-wrapper">
-            <div class="logo">
-                <a href="{{ url_for('home') }}">Fahamu</a>
+            <div class="logo-container">
+                <a href="{{ url_for('home') }}" class="logo-link">
+                    <img src="{{ url_for('static', filename='img/logo.svg') }}" alt="Fahamu Logo" class="logo-image">
+                </a>
             </div>
             <nav class="nav">
-                <a href="{{ url_for('home') }}" class="nav-link">Home</a>
-                <a href="{{ url_for('chat') }}" class="nav-link">Chat</a>
+                <a href="{{ url_for('home') }}" class="nav-link">
+                    <i class="fas fa-home"></i> Home
+                </a>
+                <a href="{{ url_for('chat') }}" class="nav-link">
+                    <i class="fas fa-comment-dots"></i> Chat
+                </a>
                 {% if current_user.is_authenticated %}
                     {% if current_user.is_admin %}
-                        <a href="{{ url_for('admin_dashboard') }}" class="nav-link">Admin</a>
+                        <a href="{{ url_for('admin_dashboard') }}" class="nav-link">
+                            <i class="fas fa-chart-bar"></i> Admin
+                        </a>
                     {% endif %}
-                    <a href="{{ url_for('profile') }}" class="nav-link">Profile</a>
-                    <a href="{{ url_for('logout') }}" class="nav-link">Logout</a>
+                    <a href="{{ url_for('profile') }}" class="nav-link">
+                        <i class="fas fa-user-circle"></i> Profile
+                    </a>
+                    <a href="{{ url_for('settings') }}" class="nav-link">
+                        <i class="fas fa-cog"></i> Settings
+                    </a>
+                    <a href="{{ url_for('logout') }}" class="nav-link">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </a>
                 {% else %}
-                    <a href="{{ url_for('login') }}" class="nav-link">Login</a>
-                    <a href="{{ url_for('register') }}" class="nav-link">Register</a>
+                    <a href="{{ url_for('login') }}" class="nav-link">
+                        <i class="fas fa-sign-in-alt"></i> Login
+                    </a>
+                    <a href="{{ url_for('register') }}" class="nav-link">
+                        <i class="fas fa-user-plus"></i> Register
+                    </a>
                 {% endif %}
             </nav>
         </div>
     </header>
 
     <main class="main">
+        <!-- Background wave animation -->
+        <div class="wave-bg"></div>
+        
         <div class="container">
-            <!-- Flash messages -->
+            <!-- Flash messages with animation -->
             {% with messages = get_flashed_messages(with_categories=true) %}
                 {% if messages %}
                     {% for category, message in messages %}
-                        <div class="alert alert-{{ category }}">
+                        <div class="alert alert-{{ category }} animate__animated animate__fadeIn">
                             {{ message }}
                         </div>
                     {% endfor %}
@@ -69,34 +94,38 @@
         <div class="container">
             <div class="footer-content">
                 <div class="footer-section">
-                    <h4 class="footer-heading">Fahamu</h4>
+                    <div class="footer-logo">
+                        <img src="{{ url_for('static', filename='img/logo.svg') }}" alt="Fahamu Logo" class="footer-logo-image">
+                    </div>
+                    <p class="footer-tagline">Finding healing one talk at a time.</p>
                     <p>Your AI-powered mental health and wellness companion, specialized in anxiety therapy. Connect through text or voice for personalized support.</p>
                 </div>
                 <div class="footer-section">
                     <h4 class="footer-heading">Quick Links</h4>
                     <ul class="footer-links">
-                        <li><a href="{{ url_for('home') }}">Home</a></li>
-                        <li><a href="{{ url_for('chat') }}">Chat with Fahamu</a></li>
+                        <li><a href="{{ url_for('home') }}"><i class="fas fa-chevron-right"></i> Home</a></li>
+                        <li><a href="{{ url_for('chat') }}"><i class="fas fa-chevron-right"></i> Chat with Fahamu</a></li>
                         {% if current_user.is_authenticated %}
-                            <li><a href="{{ url_for('profile') }}">Your Profile</a></li>
+                            <li><a href="{{ url_for('profile') }}"><i class="fas fa-chevron-right"></i> Your Profile</a></li>
+                            <li><a href="{{ url_for('settings') }}"><i class="fas fa-chevron-right"></i> Voice Settings</a></li>
                         {% else %}
-                            <li><a href="{{ url_for('login') }}">Login</a></li>
-                            <li><a href="{{ url_for('register') }}">Register</a></li>
+                            <li><a href="{{ url_for('login') }}"><i class="fas fa-chevron-right"></i> Login</a></li>
+                            <li><a href="{{ url_for('register') }}"><i class="fas fa-chevron-right"></i> Register</a></li>
                         {% endif %}
                     </ul>
                 </div>
                 <div class="footer-section">
                     <h4 class="footer-heading">Resources</h4>
                     <ul class="footer-links">
-                        <li><a href="https://www.nimh.nih.gov/health/topics/anxiety-disorders" target="_blank">NIMH Anxiety Information</a></li>
-                        <li><a href="https://adaa.org/" target="_blank">Anxiety and Depression Association</a></li>
-                        <li><a href="https://www.crisistextline.org/" target="_blank">Crisis Text Line</a></li>
-                        <li><a href="https://www.nami.org/help" target="_blank">NAMI Helpline</a></li>
+                        <li><a href="https://www.nimh.nih.gov/health/topics/anxiety-disorders" target="_blank"><i class="fas fa-chevron-right"></i> NIMH Anxiety Information</a></li>
+                        <li><a href="https://adaa.org/" target="_blank"><i class="fas fa-chevron-right"></i> Anxiety and Depression Association</a></li>
+                        <li><a href="https://www.crisistextline.org/" target="_blank"><i class="fas fa-chevron-right"></i> Crisis Text Line</a></li>
+                        <li><a href="https://www.nami.org/help" target="_blank"><i class="fas fa-chevron-right"></i> NAMI Helpline</a></li>
                     </ul>
                 </div>
             </div>
             <div class="copyright">
-                <p>&copy; 2023 Fahamu. All rights reserved. Fahamu is not a substitute for professional mental health treatment.</p>
+                <p>&copy; 2025 Fahamu. All rights reserved. Fahamu is not a substitute for professional mental health treatment.</p>
             </div>
         </div>
     </footer>
@@ -107,7 +136,34 @@
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     
+    <!-- Animation Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
+
     <!-- Main JavaScript -->
+    <script>
+        // Add animations and interactive elements to the UI
+        document.addEventListener('DOMContentLoaded', function() {
+            // Navigation hover effects
+            const navLinks = document.querySelectorAll('.nav-link');
+            navLinks.forEach(link => {
+                link.addEventListener('mouseenter', function() {
+                    this.classList.add('nav-link-hover');
+                });
+                link.addEventListener('mouseleave', function() {
+                    this.classList.remove('nav-link-hover');
+                });
+            });
+            
+            // Add active class to current nav link
+            const currentPath = window.location.pathname;
+            navLinks.forEach(link => {
+                if (link.getAttribute('href') === currentPath) {
+                    link.classList.add('nav-link-active');
+                }
+            });
+        });
+    </script>
+    
     {% block scripts %}{% endblock %}
 </body>
 </html>
