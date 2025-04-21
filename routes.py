@@ -1,6 +1,7 @@
 from flask import render_template, url_for, flash, redirect, request, jsonify, session
 from flask_login import login_user, current_user, logout_user, login_required
 from werkzeug.security import generate_password_hash, check_password_hash
+from sqlalchemy import case, func
 import uuid
 import json
 from datetime import datetime
@@ -255,6 +256,8 @@ def admin_users():
     users = User.query.all()
     return render_template('admin/users.html', title='Manage Users', users=users)
 
+
+
 @app.route('/admin/analytics')
 @login_required
 def admin_analytics():
@@ -264,28 +267,34 @@ def admin_analytics():
     
     # Get anxiety assessment stats
     assessment_counts = db.session.query(
-        AnxietyAssessment.severity, 
-        db.func.count(AnxietyAssessment.id)
-    ).group_by(AnxietyAssessment.severity).all()
-    
+        case(
+            (AnxietyAssessment.score <= 4, "Minimal Anxiety"),
+            (AnxietyAssessment.score <= 9, "Mild Anxiety"),
+            (AnxietyAssessment.score <= 14, "Moderate Anxiety"),
+            else_="Severe Anxiety"
+        ).label("severity"),
+        func.count(AnxietyAssessment.id)
+    ).group_by("severity").all()
+
     # Format for chart.js
     severity_labels = [level for level, _ in assessment_counts]
     severity_data = [count for _, count in assessment_counts]
-    
+
     # Get user activity over time (registered users per month)
     user_monthly_counts = db.session.query(
-        db.func.strftime('%Y-%m', User.date_joined).label('month'),
-        db.func.count(User.id)
+        func.strftime('%Y-%m', User.date_joined).label('month'),  # Use to_char if PostgreSQL
+        func.count(User.id)
     ).group_by('month').all()
-    
+
     months = [month for month, _ in user_monthly_counts]
     user_counts = [count for _, count in user_monthly_counts]
-    
+
     return render_template('admin/analytics.html', title='Analytics',
-                          severity_labels=json.dumps(severity_labels),
-                          severity_data=json.dumps(severity_data),
-                          months=json.dumps(months),
-                          user_counts=json.dumps(user_counts))
+                           severity_labels=json.dumps(severity_labels),
+                           severity_data=json.dumps(severity_data),
+                           months=json.dumps(months),
+                           user_counts=json.dumps(user_counts))
+
 
 @app.route('/admin/send_notification', methods=['POST'])
 @login_required

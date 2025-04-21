@@ -26,7 +26,7 @@ def get_response(intent, user_message):
     elif intent == "greeting":
         if random.random() < 0.5:  # 50% chance to add a follow-up question
             follow_ups = [
-                " How has your anxiety been today?",
+                " How has your day been today?",
                 " What brings you to our conversation today?",
                 " Is there something specific you'd like to work on in our session?"
             ]

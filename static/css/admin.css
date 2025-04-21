@@ -25,15 +25,12 @@
   color: white;
   padding: var(--space-4) 0;
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-  position: fixed;
-  height: 100vh;
+  height: auto;
   overflow-y: auto;
-  z-index: 100;
 }
 
 .admin-content {
   flex: 1;
-  margin-left: 250px;
   padding: var(--space-5);
   background-color: var(--admin-background);
   min-height: 100vh;

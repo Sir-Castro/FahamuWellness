@@ -9,7 +9,7 @@ from flask_mail import Mail
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
-logger = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)  
 
 class Base(DeclarativeBase):
     pass

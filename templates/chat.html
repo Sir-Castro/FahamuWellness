@@ -127,11 +127,9 @@
         <!-- Chat Mode Selector -->
         <div class="chat-modes mb-4">
             <div class="chat-mode-option active" data-mode="text">
-                <i class="fas fa-keyboard"></i> Text Chat
+                <i class="fas fa-keyboard"></i> Let's Chat
             </div>
-            <div class="chat-mode-option" data-mode="voice">
-                <i class="fas fa-microphone"></i> Voice Chat
-            </div>
+
         </div>
         
         <!-- Text Chat Interface -->
@@ -192,114 +190,69 @@
             </div>
         </div>
         
-        <!-- Voice Chat Interface -->
-        <div class="voice-chat-container">
-            <div class="chat-container">
-                <div class="chat-header">
-                    <h3 class="chat-title">Voice Conversation with Fahamu</h3>
-                    <div class="chat-controls">
-                        <div class="speak-indicator">
-                            <div class="speak-wave"></div>
-                            <div class="speak-wave"></div>
-                            <div class="speak-wave"></div>
-                            <div class="speak-wave"></div>
-                        </div>
-                        <span class="message-status"></span>
-                    </div>
-                </div>
-                
-                <div class="chat-body">
-                    <!-- Voice chat messages will be displayed here -->
-                </div>
-                
-                <div class="chat-footer">
-                    <div class="voice-visualizer-container">
-                        <object class="voice-visualizer-image" type="image/svg+xml" data="{{ url_for('static', filename='img/voice-animation.svg') }}" id="voice-animation"></object>
-                        <div class="listening-status">
-                            <span id="listening-indicator">Click microphone to start speaking</span>
-                        </div>
-                    </div>
-                    
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div class="continuous-mode-toggle" id="continuous-mode">
-                            <div class="toggle-switch"></div>
-                            <span class="ms-2">Continuous Listening Mode</span>
-                        </div>
-                        
-                        <button type="button" class="chat-voice-toggle btn btn-lg btn-primary rounded-circle" id="voice-toggle-btn" title="Start/Stop listening">
-                            <i class="fas fa-microphone"></i>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
+
     </div>
     
     <div class="col-lg-4">
         <div class="card mb-4">
             <div class="card-body">
-                <div class="settings-card-header">
-                    <div class="settings-card-icon">
-                        <i class="fas fa-sliders-h"></i>
+                <div class="settings-card-header d-flex justify-content-between align-items-center" id="voice-settings-header" style="cursor: pointer;">
+                    <div class="d-flex align-items-center">
+                        <div class="settings-card-icon me-2">
+                            <i class="fas fa-sliders-h"></i>
+                        </div>
+                        <h4 class="settings-card-title mb-0">Voice Settings</h4>
                     </div>
-                    <h4 class="settings-card-title">Voice Settings</h4>
+                    <i class="fas fa-chevron-up" id="voice-settings-toggle-icon"></i>
                 </div>
-                
-                <p class="mb-4">Customize how Fahamu sounds when speaking to you.</p>
-                
-                <input type="hidden" id="voice-preference" value="{{ voice_preference }}">
-                
-                <div class="voice-option">
-                    <label for="voice-gender" class="form-label">Voice Type</label>
-                    <select id="voice-gender" class="form-select">
-                        <option value="female" {% if voice_preference == 'female' %}selected{% endif %}>Female</option>
-                        <option value="male" {% if voice_preference == 'male' %}selected{% endif %}>Male</option>
-                    </select>
-                </div>
-                
-                <div class="voice-option mt-3">
-                    <label for="voice-pitch" class="form-label">Voice Pitch: <span id="voice-pitch-value">{{ voice_pitch }}</span></label>
-                    <input type="range" id="voice-pitch" class="form-range" min="0.5" max="2" step="0.1" value="{{ voice_pitch }}">
-                    <div class="range-labels">
-                        <span>Lower</span>
-                        <span>Default</span>
-                        <span>Higher</span>
+        
+                <div id="voice-settings-content" class="mt-3">
+                    <p class="mb-4">Customize how Fahamu sounds when speaking to you.</p>
+                    <input type="hidden" id="voice-preference" value="{{ voice_preference }}">
+        
+
+--
+                    <div class="voice-option mt-3">
+                        <label for="voice-pitch" class="form-label">Voice Pitch: <span id="voice-pitch-value">{{ voice_pitch }}</span></label>
+                        <input type="range" id="voice-pitch" class="form-range" min="0.5" max="2" step="0.1" value="{{ voice_pitch }}">
+                        <div class="range-labels">
+                            <span>Lower</span>
+                            <span>Default</span>
+                            <span>Higher</span>
+                        </div>
                     </div>
-                </div>
-                
-                <div class="voice-option mt-3">
-                    <label for="voice-speed" class="form-label">Voice Speed: <span id="voice-speed-value">{{ voice_speed }}</span></label>
-                    <input type="range" id="voice-speed" class="form-range" min="0.5" max="2" step="0.1" value="{{ voice_speed }}">
-                    <div class="range-labels">
-                        <span>Slower</span>
-                        <span>Default</span>
-                        <span>Faster</span>
+                    <div class="voice-option mt-3">
+                        <label for="voice-speed" class="form-label">Voice Speed: <span id="voice-speed-value">{{ voice_speed }}</span></label>
+                        <input type="range" id="voice-speed" class="form-range" min="0.5" max="2" step="0.1" value="{{ voice_speed }}">
+                        <div class="range-labels">
+                            <span>Slower</span>
+                            <span>Default</span>
+                            <span>Faster</span>
+                        </div>
                     </div>
-                </div>
+                    <div class="form-check mt-4">
+                        <input class="form-check-input" type="checkbox" id="auto-speak" checked>
+                        <label class="form-check-label" for="auto-speak">
+                            <i class="fas fa-volume-up me-2"></i> Automatically speak responses
+                        </label>
+                    </div>
+                    <div class="form-check mt-2">
+                        <input class="form-check-input" type="checkbox" id="auto-submit" checked>
+                        <label class="form-check-label" for="auto-submit">
+                            <i class="fas fa-magic me-2"></i> Auto-submit after voice input
+                        </label>
+                    </div>
+                    <hr class="my-4">
                 
-                <div class="form-check mt-4">
-                    <input class="form-check-input" type="checkbox" id="auto-speak" checked>
-                    <label class="form-check-label" for="auto-speak">
-                        <i class="fas fa-volume-up me-2"></i> Automatically speak responses
-                    </label>
-                </div>
-                
-                <div class="form-check mt-2">
-                    <input class="form-check-input" type="checkbox" id="auto-submit" checked>
-                    <label class="form-check-label" for="auto-submit">
-                        <i class="fas fa-magic me-2"></i> Auto-submit after voice input
-                    </label>
-                </div>
-                
-                <hr class="my-4">
-                
-                <div class="text-center">
-                    <a href="{{ url_for('settings') }}" class="btn btn-outline">
-                        <i class="fas fa-cog me-2"></i> Advanced Voice Settings
-                    </a>
+                    <div class="text-center">
+                        <a href="{{ url_for('settings') }}" class="btn btn-outline">
+                            <i class="fas fa-cog me-2"></i> Advanced Voice Settings
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
+        
         
         <div class="card">
             <div class="card-body">
@@ -335,6 +288,67 @@
         </div>
     </div>
 </div>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const header = document.getElementById("voice-settings-header");
+        const content = document.getElementById("voice-settings-content");
+        const icon = document.getElementById("voice-settings-toggle-icon");
+
+        header.addEventListener("click", function() {
+            content.classList.toggle("collapsed");
+            if (content.classList.contains("collapsed")) {
+                icon.classList.remove("fa-chevron-up");
+                icon.classList.add("fa-chevron-down");
+            } else {
+                icon.classList.remove("fa-chevron-down");
+                icon.classList.add("fa-chevron-up");
+            }
+        });
+    });
+</script>
+
+{% endblock %}
+{% block additional_scripts %}
+<script>
+    const voiceProcessor = new VoiceProcessor();
+
+    const voiceToggleBtn = document.getElementById('voice-toggle-btn');
+    const continuousToggle = document.getElementById('continuous-mode');
+    const listeningIndicator = document.getElementById('listening-indicator');
+    const voiceAnimation = document.getElementById('voice-animation');
+
+    voiceProcessor.triggerEvent = function(event, data) {
+        switch (event) {
+            case 'recognitionStart':
+                listeningIndicator.textContent = "Listening... Speak now!";
+                voiceAnimation.style.display = 'block';
+                break;
+            case 'recognitionEnd':
+                listeningIndicator.textContent = "Click microphone to start speaking";
+                voiceAnimation.style.display = 'none';
+                break;
+            case 'recognitionResult':
+                console.log("User said:", data.transcript);
+                break;
+            case 'continuousModeChanged':
+                console.log("Continuous mode:", data);
+                break;
+            case 'recognitionError':
+                listeningIndicator.textContent = "Error: " + data;
+                break;
+        }
+    };
+
+    voiceToggleBtn.addEventListener('click', () => {
+        voiceProcessor.toggleListening();
+    });
+
+    continuousToggle.addEventListener('click', () => {
+        const enabled = !voiceProcessor.continuousMode;
+        voiceProcessor.setContinuousMode(enabled);
+        continuousToggle.classList.toggle('active', enabled);
+    });
+</script>
 {% endblock %}
 
 {% block scripts %}

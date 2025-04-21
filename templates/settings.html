@@ -13,13 +13,7 @@
                 <form method="POST" action="{{ url_for('settings') }}">
                     {{ form.hidden_tag() }}
                     
-                    <div class="form-group mb-4">
-                        {{ form.voice_gender.label(class="form-label fs-5") }}
-                        {{ form.voice_gender(class="form-select") }}
-                        <div class="form-text">
-                            Choose between a male or female voice for Fahamu's responses.
-                        </div>
-                    </div>
+
                     
                     <div class="form-group mb-4">
                         {{ form.voice_pitch.label(class="form-label fs-5") }}

@@ -3,16 +3,32 @@ import os
 import random
 
 def get_intent_responses():
-    """Load intent responses from intents.json"""
-    try:
-        with open(os.path.join(os.path.dirname(__file__), 'intents.json'), 'r') as file:
-            data = json.load(file)
-            return {intent['tag']: intent['responses'] for intent in data['intents']}
-    except Exception as e:
-        print(f"Error loading intent responses: {e}")
-        return {}
+    """Load and merge intent responses from intents.json, intents2.json, intents3.json, intents4.json"""
+    response_files = ['intents.json', 'intents2.json', 'intents3.json', 'intents4.json', 'intents5.json', 'intents6.json', 'intents7.json', 'intents8.json', 'intents9.json']
+    merged_responses = {}
+    merged_patterns = {}
 
-# Fallback responses for when the intent is unclear
+    for file_name in response_files:
+        try:
+            file_path = os.path.join(os.path.dirname(__file__), file_name)
+            with open(file_path, 'r') as file:
+                data = json.load(file)
+                for intent in data.get('intents', []):
+                    tag = intent['tag']
+                    responses = intent.get('responses', [])
+                    patterns = intent.get('patterns', [])
+                    if tag in merged_responses:
+                        merged_responses[tag].extend(responses)
+                        merged_patterns[tag].extend(patterns)
+                    else:
+                        merged_responses[tag] = responses
+                        merged_patterns[tag] = patterns
+        except Exception as e:
+            print(f"Error loading {file_name}: {e}")
+
+    return merged_responses, merged_patterns
+
+# Fallback responses
 FALLBACK_RESPONSES = [
     "I'm not sure I understand. Could you rephrase that?",
     "I'm still learning to understand different expressions. Could you try explaining what you mean differently?",
@@ -21,48 +37,28 @@ FALLBACK_RESPONSES = [
     "Let's try approaching this differently. Could you tell me more about how you're feeling right now?"
 ]
 
-# Additional therapeutic responses for common anxiety situations
-THERAPEUTIC_RESPONSES = {
-    "overwhelmed": [
-        "When you're feeling overwhelmed, try breaking things down into smaller, manageable tasks. What's one small step you could take right now?",
-        "It's natural to feel overwhelmed sometimes. Let's focus on taking one breath at a time. Can you try taking a deep breath with me?",
-        "Feeling overwhelmed can be paralyzing. Try the 3-3-3 rule: Name 3 things you see, 3 things you hear, and move 3 parts of your body."
-    ],
-    "social_anxiety": [
-        "Social situations can be challenging. Remember that most people are focused on themselves, not judging you.",
-        "Before social events, it can help to prepare a few conversation starters. What's an event you're nervous about?",
-        "When experiencing social anxiety, focus on making one genuine connection rather than impressing everyone."
-    ],
-    "health_anxiety": [
-        "Health anxiety can be very distressing. Remember that our minds often jump to worst-case scenarios, but these rarely happen.",
-        "With health concerns, it can help to ask: What's the evidence for and against my worry? Is there a more balanced perspective?",
-        "When health anxiety strikes, focus on the present moment and notice if you're actually okay right now."
-    ],
-    "perfectionism": [
-        "Perfectionism often fuels anxiety. Remember that 'done' is better than 'perfect'.",
-        "Try setting time limits for tasks to avoid perfectionist tendencies. How does that sound?",
-        "Consider what you'd say to a friend with the same perfectionist concerns. Can you offer yourself the same compassion?"
-    ]
-}
 
-def get_response_for_intent(intent, user_message=""):
-    """Get a response based on the intent and potentially the user message content"""
-    responses = get_intent_responses()
-    
-    if intent in responses and responses[intent]:
+def get_response_for_intent(intent=None, user_message=""):
+    """Determine intent from user message and provide an appropriate response."""
+    responses, patterns = get_intent_responses()
+
+    if intent and intent in responses and responses[intent]:
         return random.choice(responses[intent])
-    
-    # Check for specific anxiety subtypes in the message
-    user_message_lower = user_message.lower()
-    
-    if "overwhelm" in user_message_lower:
-        return random.choice(THERAPEUTIC_RESPONSES["overwhelmed"])
-    elif any(word in user_message_lower for word in ["social", "people", "party", "meeting", "presentation"]):
-        return random.choice(THERAPEUTIC_RESPONSES["social_anxiety"])
-    elif any(word in user_message_lower for word in ["health", "sick", "disease", "doctor", "symptom", "pain"]):
-        return random.choice(THERAPEUTIC_RESPONSES["health_anxiety"])
-    elif any(word in user_message_lower for word in ["perfect", "mistake", "fail", "right", "wrong"]):
-        return random.choice(THERAPEUTIC_RESPONSES["perfectionism"])
-    
-    # Fallback response if intent is unclear
+
+    user_message_lower = user_message.lower().strip()
+
+    # Handle empty input with 'no-response' intent
+    if not user_message_lower:
+        return random.choice(responses.get("no-response", FALLBACK_RESPONSES))
+
+    # Pattern matching fallback (skip empty patterns!)
+    for tag, pattern_list in patterns.items():
+        for pattern in pattern_list:
+            if not pattern.strip():
+                continue  # skip empty patterns like ""
+            if pattern.lower() in user_message_lower:
+                return random.choice(responses.get(tag, FALLBACK_RESPONSES))
+
+ 
+
     return random.choice(FALLBACK_RESPONSES)

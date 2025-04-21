@@ -195,6 +195,8 @@ a:hover {
 .nav-link:hover {
   background-color: var(--primary-dark);
   text-decoration: none;
+  color: var(--neutral-100);
+
 }
 
 .footer {
@@ -221,7 +223,7 @@ a:hover {
 
 .footer-section {
   flex: 1;
-  min-width: 250px;
+  min-width: 500px;
 }
 
 .footer-heading {
@@ -419,6 +421,23 @@ a:hover {
   color: #721c24;
   background-color: #f8d7da;
   border-color: #f5c6cb;
+}
+.message-status{
+  font-size: var(--text-sm);
+  color: var(--neutral-600);
+  margin-top: var(--space-1);
+  text-align: center; 
+}
+#voice-settings-content {
+  transition: max-height 0.3s ease, opacity 0.3s ease;
+  overflow: hidden;
+}
+
+#voice-settings-content.collapsed {
+  max-height: 0;
+  opacity: 0;
+  padding: 0;
+  margin: 0;
 }
 
 /* Chat Interface */
@@ -859,6 +878,7 @@ a:hover {
 .logo-container {
   display: flex;
   align-items: center;
+  justify-content: flex-start;
 }
 
 .logo-image {
@@ -900,6 +920,35 @@ a:hover {
   z-index: var(--z-background);
   opacity: 0.4;
 }
+.footer-branding {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.footer-logo-text {
+  font-family: 'Raleway', sans-serif;
+  font-weight: 700;
+  font-size: 24px;
+  color: #333;
+  margin-bottom: 5px;
+}
+.logo-text {
+  margin-left: 10px;
+  font-size: 1.5rem;
+  font-weight: 600;
+  align-items: left;
+  color: white;  /* Adjust depending on your theme */
+}
+
+
+.footer-tagline {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 400;
+  font-size: 20px;
+  color: #555;
+  margin: 0;
+}
 
 /* Navigation enhancements */
 .nav-link {
@@ -921,6 +970,7 @@ a:hover {
   background-color: var(--primary-dark);
   transform: translateY(-2px);
   box-shadow: var(--shadow-md);
+  
 }
 
 .nav-link-active {
@@ -935,7 +985,6 @@ a:hover {
   left: 50%;
   width: 0;
   height: 2px;
-  background-color: var(--neutral-100);
   transition: all var(--transition-normal) ease-in-out;
   transform: translateX(-50%);
 }
@@ -987,11 +1036,15 @@ a:hover {
 .voice-chat-container,
 .text-chat-container {
   display: none;
+  min-height: 300px;  /* or height: 300px; */
+
 }
 
 .voice-chat-container.active,
 .text-chat-container.active {
   display: block;
+  min-height: 300px;  /* or height: 300px; */
+
 }
 
 .voice-visualizer {

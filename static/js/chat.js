@@ -31,33 +31,34 @@ document.addEventListener('DOMContentLoaded', function() {
         // Deal with network permission for speech recognition
         // Speech recognition often fails in Replit's environment due to network permission issues
         // This is a workaround to simulate voice functionality without relying on actual speech recognition
+        // Remove the simulateVoiceInput function entirely
+        // And modify the error handling in the recognition section as follows:
+
         if (window.voiceProcessor && window.voiceProcessor.recognition) {
             // Add event listener for network errors
             window.voiceProcessor.recognition.onerror = function(event) {
                 console.error("Speech recognition error:", event.error);
                 
-                // If it's a network error, use simulated voice input instead
+                // If it's a network error, use simulated voice input instead (remove this block)
                 if (event.error === 'network') {
                     // Show friendly message to user
                     const statusEls = document.querySelectorAll('.message-status');
                     statusEls.forEach(el => {
-                        el.textContent = 'Voice recognition unavailable in this environment. Simulating voice input...';
+                        el.textContent = 'Voice recognition unavailable in this environment.';
                     });
                     
-                    // Simulate voice input with predefined responses
+                    // Do not simulate voice input anymore
+                    
+                    // Remove the status message after a delay
                     setTimeout(() => {
-                        simulateVoiceInput();
-                        
-                        // Clear status message after a delay
-                        setTimeout(() => {
-                            statusEls.forEach(el => {
-                                el.textContent = '';
-                            });
-                        }, 3000);
-                    }, 1500);
+                        statusEls.forEach(el => {
+                            el.textContent = '';
+                        });
+                    }, 3000);
                 }
             };
         }
+
         
         // Add welcome message to both chat interfaces
         if (introMessage && introMessage.textContent) {
@@ -217,6 +218,22 @@ document.addEventListener('DOMContentLoaded', function() {
                 { text: "Ways to improve my mood", icon: "fas fa-smile", category: "techniques" },
                 { text: "How to start meditation", icon: "fas fa-om", category: "techniques" }
             ];
+            // Map each prompt to a corresponding response
+            const predefinedResponses = {
+                "I've been feeling anxious lately": "I'm sorry you're feeling anxious. Deep breathing, grounding exercises, and speaking to someone you trust can help ease anxiety. Want me to guide you through a breathing exercise?",
+                "What breathing exercises help with anxiety?": "A great place to start is the 4-7-8 technique: Inhale for 4 seconds, hold your breath for 7, and exhale slowly for 8. Want me to walk you through it?",
+                "I'm having trouble sleeping": "Sleep troubles can be exhausting. Have you tried a relaxing bedtime routine, like dimming lights, limiting screens, and breathing exercises before bed?",
+                "How can I calm my racing thoughts?": "Racing thoughts can be overwhelming. Mindfulness, journaling, and focusing on your senses are helpful techniques. Would you like me to guide you through one?",
+                "Tell me about mindfulness": "Mindfulness is about focusing on the present moment without judgment. It can help ease stress and anxiety. Want a short exercise to try right now?",
+                "What to do during a panic attack": "During a panic attack, remind yourself it will pass. Try breathing slowly, grounding with the 5-4-3-2-1 method, and finding a quiet place. Want me to guide you through one?",
+                "I feel overwhelmed at work": "I'm sorry you're feeling overwhelmed. Prioritizing tasks, taking short breaks, and self-compassion can really help. Want me to suggest some stress relief techniques?",
+                "Techniques for social anxiety": "Social anxiety can be tough. Practicing small interactions, breathing techniques, and preparing phrases ahead can help. Would you like some specific exercises?",
+                "How to handle uncertainty": "Uncertainty is hard to live with, but focusing on what you can control and practicing mindfulness can help you find stability. Want me to show you an example?",
+                "I'm worried about the future": "It's okay to feel uncertain about the future. Talking it out, planning small steps, and focusing on today can ease the load. Want help with setting short-term goals?",
+                "Ways to improve my mood": "Boosting your mood can start small: go for a walk, listen to music, or chat with a friend. Want me to suggest a mood-boosting exercise?",
+                "How to start meditation": "Starting meditation is simple: find a quiet spot, sit comfortably, and focus on your breath. Even 2 minutes can help. Want me to guide you through a beginner session?"
+            };
+
             
             // Initially add just the first 6 prompts
             const initialPrompts = prompts.slice(0, 6);
@@ -242,6 +259,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Send message to server
     function sendMessage(chatBody, message) {
+        
         fetch('/send_message', {
             method: 'POST',
             headers: {
